@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -49,4 +48,39 @@
     </plugins>
   </build>
 
+  <dependencies>
+      <!-- Look and Feel Moderno -->
+      <dependency>
+          <groupId>com.formdev</groupId>
+          <artifactId>flatlaf</artifactId>
+          <version>3.4.1</version>
+      </dependency>
+
+      <!-- Biblioteca de Gráficos -->
+      <dependency>
+          <groupId>org.jfree</groupId>
+          <artifactId>jfreechart</artifactId>
+          <version>1.5.4</version>
+      </dependency>
+      
+      <!-- Componente de Seleção de Data -->
+      <dependency>
+          <groupId>com.github.lgooddatepicker</groupId>
+          <artifactId>LGoodDatePicker</artifactId>
+          <version>11.2.1</version>
+      </dependency>
+      
+      <!-- Conector MySQL (versão mais recente consolidada) -->
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>8.0.33</version>
+      </dependency>
+      
+       <dependency>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+          <version>20231013</version>
+      </dependency>
+  </dependencies>
 </project>
