@@ -49,38 +49,43 @@
   </build>
 
   <dependencies>
-      <!-- Look and Feel Moderno -->
-      <dependency>
-          <groupId>com.formdev</groupId>
-          <artifactId>flatlaf</artifactId>
-          <version>3.4.1</version>
-      </dependency>
-
-      <!-- Biblioteca de Gráficos -->
       <dependency>
           <groupId>org.jfree</groupId>
           <artifactId>jfreechart</artifactId>
           <version>1.5.4</version>
       </dependency>
       
-      <!-- Componente de Seleção de Data -->
       <dependency>
           <groupId>com.github.lgooddatepicker</groupId>
           <artifactId>LGoodDatePicker</artifactId>
           <version>11.2.1</version>
       </dependency>
       
-      <!-- Conector MySQL (versão mais recente consolidada) -->
       <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
           <version>8.0.33</version>
       </dependency>
-      
-       <dependency>
-          <groupId>org.json</groupId>
-          <artifactId>json</artifactId>
-          <version>20231013</version>
-      </dependency>
+    <dependency>
+        <groupId>com.formdev</groupId>
+        <artifactId>flatlaf</artifactId>
+        <version>3.4.1</version>
+    </dependency>
+
+    <dependency>
+        <groupId>com.miglayout</groupId>
+        <artifactId>miglayout-swing</artifactId>
+        <version>11.1</version>
+    </dependency>
+	<dependency>
+  	  	<groupId>com.zaxxer</groupId>
+    	<artifactId>HikariCP</artifactId>
+    	<version>5.1.0</version> 
+	</dependency>
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20231013</version>
+    </dependency>
   </dependencies>
 </project>

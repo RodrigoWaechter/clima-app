@@ -13,13 +13,14 @@ public class DadoHorario {
 	private Double velocidadeVento;
 	private Short direcaoVento;
 	private Double precipitacao;
-
+	private Integer cdClima;
+	
 	public DadoHorario() {
 	}
 
 	public DadoHorario(Integer idDadoHorario, Localizacao localizacao, LocalDateTime horario, Double temperatura,
 			Double umidadeRelativa, Double sensacaoTermica, Double velocidadeVento, Short direcaoVento,
-			Double precipitacao) {
+			Double precipitacao, Integer cdClima) {
 		this.idDadoHorario = idDadoHorario;
 		this.localizacao = localizacao;
 		this.horario = horario;
@@ -29,10 +30,11 @@ public class DadoHorario {
 		this.velocidadeVento = velocidadeVento;
 		this.direcaoVento = direcaoVento;
 		this.precipitacao = precipitacao;
+		this.cdClima = cdClima;
 	}
 
 	public DadoHorario(Localizacao localizacao, LocalDateTime horario, Double temperatura, Double umidadeRelativa,
-			Double sensacaoTermica, Double velocidadeVento, Short direcaoVento, Double precipitacao) {
+			Double sensacaoTermica, Double velocidadeVento, Short direcaoVento, Double precipitacao, Integer cdClima) {
 		this.localizacao = localizacao;
 		this.horario = horario;
 		this.temperatura = temperatura;
@@ -41,6 +43,7 @@ public class DadoHorario {
 		this.velocidadeVento = velocidadeVento;
 		this.direcaoVento = direcaoVento;
 		this.precipitacao = precipitacao;
+		this.cdClima = cdClima;
 	}
 
 	public Integer getIdDadoHorario() {
@@ -115,11 +118,12 @@ public class DadoHorario {
 		this.precipitacao = precipitacao;
 	}
 
-	@Override
-	public String toString() {
-		return "DadosHorarios{" + "id=" + idDadoHorario + ", idLocalizacao=" + localizacao + ", horario=" + horario
-				+ ", temperatura=" + temperatura + ", umidadeRelativa=" + umidadeRelativa + ", sensacaoTermica="
-				+ sensacaoTermica + ", velocidadeVento=" + velocidadeVento + ", direcaoVento=" + direcaoVento
-				+ ", precipitacao=" + precipitacao + '}';
+	public Integer getCdClima() {
+		return cdClima;
 	}
+
+	public void setCdClima(Integer cdClima) {
+		this.cdClima = cdClima;
+	}
+
 }

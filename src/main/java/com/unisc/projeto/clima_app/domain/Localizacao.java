@@ -29,7 +29,6 @@ public class Localizacao {
 		this.dataHoraRegistro = dataHoraRegistro;
 	}
 
-
 	public Integer getIdLocalizacao() {
 		return idLocalizacao;
 	}

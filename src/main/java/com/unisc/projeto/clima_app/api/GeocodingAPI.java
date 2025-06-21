@@ -6,45 +6,65 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Classe para interagir com a API de Geocoding da Open-Meteo.
- * Transforma um nome de cidade em um objeto Localizacao com coordenadas.
- */
+
 public class GeocodingAPI {
-
     private static final Logger LOGGER = Logger.getLogger(GeocodingAPI.class.getName());
-    // ATUALIZADO: URL para buscar múltiplas sugestões para o autocomplete
-    private static final String API_SEARCH_URL = "https://geocoding-api.open-meteo.com/v1/search?name=%s&count=5&language=pt&format=json";
+    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
+    private static final String API_SEARCH_URL;
 
-    /**
-     * NOVO MÉTODO: Busca uma lista de cidades para o recurso de autocompletar.
-     * Este é o método que o DashboardController usa para as sugestões.
-     * @param query O texto parcial digitado pelo usuário.
-     * @return Uma lista de objetos Localizacao correspondentes à busca.
-     */
-    public List<Localizacao> searchCitiesByName(String query) {
-        List<Localizacao> suggestions = new ArrayList<>();
-        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String apiUrl = String.format(API_SEARCH_URL, encodedQuery);
+	// bloco estático porque só precisa carregar o config.properties 1 vez
+    static {
+        Properties props = new Properties();
+        try (InputStream input = GeocodingAPI.class.getClassLoader().getResourceAsStream("config.properties")) {
+            if (input == null) {
+                throw new IllegalStateException("Te liga!! Falta o config.properties no classpath.");
+            }
+            props.load(input);
+            API_SEARCH_URL = props.getProperty("api.geocoding.url");
+            if (API_SEARCH_URL == null || API_SEARCH_URL.isBlank()) {
+                throw new IllegalStateException("A propriedade 'api.geocoding.url' está com problemas no config.properties.");
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Erro ao carregar config.properties", ex);
+            throw new RuntimeException(ex);
+        }
+    }
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
+  
+    public Optional<Localizacao> queryLocalizacaoPorNome(String nomeCidade) {
+        List<Localizacao> resultados = queryLocalizacoesFromJSON(nomeCidade);
 
+        if (resultados.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(resultados.get(0));
+        }
+    }
+
+   //conecta com a api via http request, pega os dados via JSON e cria uma lista de localizacao com os dados
+    private List<Localizacao> queryLocalizacoesFromJSON(String nomeDaCidade) {
+        List<Localizacao> localizacoesEncontradas = new ArrayList<>();
+        
         try {
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String encodedQuery = URLEncoder.encode(nomeDaCidade, StandardCharsets.UTF_8);
+            String apiUrl = String.format(API_SEARCH_URL, encodedQuery);
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
+
+            HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
                 JSONObject jsonResponse = new JSONObject(response.body());
@@ -56,32 +76,20 @@ public class GeocodingAPI {
                         loc.setNomeCidade(result.getString("name"));
                         loc.setLatitude(result.getDouble("latitude"));
                         loc.setLongitude(result.getDouble("longitude"));
-                        suggestions.add(loc);
+                        localizacoesEncontradas.add(loc);
                     }
                 }
+            } else {
+                LOGGER.severe("Falha na chamada da API de Geocoding. Status Code: " + response.statusCode());
             }
-        } catch (IOException | InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "Erro de comunicação ao buscar sugestões de cidades.", e);
-            Thread.currentThread().interrupt();
-        } catch (JSONException e) {
-            LOGGER.log(Level.SEVERE, "Erro ao processar JSON de sugestões de cidades.", e);
-        }
-        return suggestions;
-    }
 
-    /**
-     * Busca as coordenadas para um nome de cidade específico, retornando apenas o melhor resultado.
-     * @param nomeCidade O nome completo da cidade.
-     * @return Um Optional contendo a Localizacao se encontrada.
-     */
-    public Optional<Localizacao> findCoordinatesByCityName(String nomeCidade) {
-        // Reutiliza o método de busca e pega apenas o primeiro resultado, se houver.
-        List<Localizacao> results = searchCitiesByName(nomeCidade);
-        if (!results.isEmpty()) {
-            Localizacao firstResult = results.get(0);
-            firstResult.setDataHoraRegistro(LocalDateTime.now());
-            return Optional.of(firstResult);
+        } catch (IOException | InterruptedException | JSONException e) {
+            LOGGER.log(Level.SEVERE, "Erro ao comunicar com a API Geocoding ou ao processar sua resposta.", e);
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
         }
-        return Optional.empty();
+        
+        return localizacoesEncontradas;
     }
 }

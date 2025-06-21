@@ -10,13 +10,13 @@ public class DadoDiario {
 	private Double temperaturaMin;
 	private Double precipitacaoTotal;
 	private Double velocidadeVentoMax;
-
+	private Integer cdClima;
+	
 	public DadoDiario() {
-		super();
 	}
 
 	public DadoDiario(Integer idDadoDiario, Localizacao localizacao, LocalDate data, Double temperaturaMax,
-			Double temperaturaMin, Double precipitacaoTotal, Double velocidadeVentoMax) {
+			Double temperaturaMin, Double precipitacaoTotal, Double velocidadeVentoMax, Integer cdClima) {
 		super();
 		this.idDadoDiario = idDadoDiario;
 		this.localizacao = localizacao;
@@ -25,10 +25,11 @@ public class DadoDiario {
 		this.temperaturaMin = temperaturaMin;
 		this.precipitacaoTotal = precipitacaoTotal;
 		this.velocidadeVentoMax = velocidadeVentoMax;
+		this.cdClima = cdClima;
 	}
 
 	public DadoDiario(Localizacao localizacao, LocalDate data, Double temperaturaMax, Double temperaturaMin,
-			Double precipitacaoTotal, Double velocidadeVentoMax) {
+			Double precipitacaoTotal, Double velocidadeVentoMax, Integer cdClima) {
 		super();
 		this.localizacao = localizacao;
 		this.data = data;
@@ -36,6 +37,7 @@ public class DadoDiario {
 		this.temperaturaMin = temperaturaMin;
 		this.precipitacaoTotal = precipitacaoTotal;
 		this.velocidadeVentoMax = velocidadeVentoMax;
+		this.cdClima = cdClima;
 	}
 
 	public Integer getIdDadoDiario() {
@@ -92,6 +94,14 @@ public class DadoDiario {
 
 	public void setVelocidadeVentoMax(Double velocidadeVentoMax) {
 		this.velocidadeVentoMax = velocidadeVentoMax;
+	}
+
+	public Integer getCdClima() {
+		return cdClima;
+	}
+
+	public void setCdClima(Integer cdClima) {
+		this.cdClima = cdClima;
 	}
 
 }

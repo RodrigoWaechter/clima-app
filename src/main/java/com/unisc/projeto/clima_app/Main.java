@@ -1,14 +1,19 @@
 package com.unisc.projeto.clima_app;
 
-import javax.swing.SwingUtilities;
-
-import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.unisc.projeto.clima_app.view.DashboardFrm;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class Main {
 
     public static void main(String[] args) {
-        FlatMacDarkLaf.setup();
+         try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Falha ao inicializar o Look and Feel FlatLaf.");
+        }
+
         SwingUtilities.invokeLater(() -> {
             new DashboardFrm().setVisible(true);
         });

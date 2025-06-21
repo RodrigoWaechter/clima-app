@@ -10,6 +10,13 @@ public final class IconUtils {
 	public static final String WIND = "/icons/wind.png";
 	public static final String RAIN = "/icons/rain.png";
 	public static final String CLOUD = "/icons/cloud.png";
+	public static final String SUNNY = "/icons/sunny.png";
+	public static final String LOC = "/icons/loc.png";
+	public static final String CHUVA = "/icons/chuva.png";
+	public static final String GOTA = "/icons/gita.png";
+	public static final String SYNC = "/icons/sync.png";
+	public static final String VENTO = "/icons/vento.png";
+	//TODO ADICIONAR MAIS ICONES
 
 	private IconUtils() {
 	}
