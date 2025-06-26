@@ -15,67 +15,57 @@ import java.util.logging.Logger;
 import com.unisc.projeto.clima_app.domain.DadoHorario;
 
 public class DadoHorarioDAO {
-	private static final Logger LOGGER = Logger.getLogger(DadoHorarioDAO.class.getName());
 
-	// os multi try nos metodos serve para fechar o PreparedStatement e o ResultSet
-	public void salvarLista(List<DadoHorario> dados) {
-		if (dados == null || dados.isEmpty()) {
-			return;
-		}
+    private static final Logger LOGGER = Logger.getLogger(DadoHorarioDAO.class.getName());
 
-		Integer localizacaoId = dados.get(0).getLocalizacao().getIdLocalizacao();
+    public void save(List<DadoHorario> dados) {
+        if (dados == null || dados.isEmpty()) return;
 
-		Connection conn = null;
-		try {
-			conn = DatabaseConnection.getConnection();
-			
-			//Inicia a transação
-			conn.setAutoCommit(false);
+        Connection conn = null;
+        String sql = "INSERT INTO dados_horarios (id_localizacao, horario, temperatura, umidade_relativa, sensacao_termica, velocidade_vento, direcao_vento, precipitacao, cd_clima) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-			 deleteByLocalizacaoId(conn, localizacaoId);
+        try {
+            conn = DatabaseConnection.getConnection();
+            conn.setAutoCommit(false); // Inicia transação
 
-			String sql = "INSERT INTO dados_horarios (id_localizacao, horario, temperatura, umidade_relativa, sensacao_termica, velocidade_vento, direcao_vento, precipitacao, cd_clima) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-				for (DadoHorario dado : dados) {
-					validateLocalizacao(dado);
-					pstmt.setInt(1, dado.getLocalizacao().getIdLocalizacao());
-					pstmt.setTimestamp(2, Timestamp.valueOf(dado.getHorario()));
+            deleteByLocalizacaoId(conn, dados.get(0).getLocalizacao().getIdLocalizacao());
 
-					pstmt.setDouble(3, dado.getTemperatura());
-					pstmt.setDouble(4, dado.getUmidadeRelativa());
-					pstmt.setDouble(5, dado.getSensacaoTermica());
-					pstmt.setDouble(6, dado.getVelocidadeVento());
-					pstmt.setShort(7, dado.getDirecaoVento());
-					pstmt.setDouble(8, dado.getPrecipitacao());
-					pstmt.setInt(9, dado.getCdClima());
-
-					pstmt.addBatch();
-				}
-				pstmt.executeBatch();
-			}
-			//finaliza a transação
-			conn.commit();
-		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Erro na transação de salvar previsão horária.", e);
-			if (conn != null) {
-				try {
-					//rollback se der alguma cagada no meio
-					conn.rollback();
-				} catch (SQLException ex) {
-					LOGGER.log(Level.SEVERE, "Erro no rollback.", ex);
-				}
-			}
-			throw new RuntimeException("Falha ao salvar dados horários no banco.", e);
-		}
-	}
-
-	public void deleteByLocalizacaoId(Connection conn, int localizacaoId) throws SQLException {
-		String sql = "DELETE FROM dados_horarios WHERE id_localizacao = ?";
-		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, localizacaoId);
-			pstmt.executeUpdate();
-		}
-	}
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                for (DadoHorario dado : dados) {
+                    pstmt.setInt(1, dado.getLocalizacao().getIdLocalizacao());
+                    pstmt.setTimestamp(2, Timestamp.valueOf(dado.getHorario()));
+                    pstmt.setDouble(3, dado.getTemperatura());
+                    pstmt.setDouble(4, dado.getUmidadeRelativa());
+                    pstmt.setDouble(5, dado.getSensacaoTermica());
+                    pstmt.setDouble(6, dado.getVelocidadeVento());
+                    pstmt.setShort(7, dado.getDirecaoVento());
+                    pstmt.setDouble(8, dado.getPrecipitacao());
+                    pstmt.setInt(9, dado.getCdClima());
+                    pstmt.addBatch();
+                }
+                pstmt.executeBatch();
+            }
+            conn.commit(); // Confirma transação
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erro na transação de salvar previsão horária, executando rollback.", e);
+            try {
+                if (conn != null) conn.rollback();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Erro ao executar rollback.", ex);
+            }
+            throw new RuntimeException("Falha ao salvar dados horários no banco.", e);
+        } finally {
+            DatabaseConnection.closeConnection(conn);
+        }
+    }
+    
+    private void deleteByLocalizacaoId(Connection conn, int localizacaoId) throws SQLException {
+        String sql = "DELETE FROM dados_horarios WHERE id_localizacao = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, localizacaoId);
+            pstmt.executeUpdate();
+        }
+    }
 
 	public List<DadoHorario> queryProximas24Horas(int localizacaoId) {
 		List<DadoHorario> dados = new ArrayList<>();
@@ -132,10 +122,4 @@ public class DadoHorarioDAO {
 		return dado;
 	}
 
-	private void validateLocalizacao(DadoHorario dado) {
-		if (dado.getLocalizacao() == null || dado.getLocalizacao().getIdLocalizacao() == null) {
-			throw new IllegalArgumentException(
-					"DadoHorario deve ter uma Localizacao com ID para ser salvo ou atualizado.");
-		}
-	}
 }

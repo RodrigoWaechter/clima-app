@@ -140,8 +140,7 @@ public class OpenMeteoAPI {
 		return previsao;
 	}
 
-	// Metodo extraido que retorna um JSON com os dados via http request da api,
-	// utilizado nas querys
+	//  retorna um JSON com os dados via http request da api, é usado nos outros metodos
 	private Optional<JSONObject> getApiConnection(Localizacao localizacao) {
 		String apiUrl = String.format(Locale.US, API_URL_FORMAT, localizacao.getLatitude(), localizacao.getLongitude());
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();

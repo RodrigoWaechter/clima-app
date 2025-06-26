@@ -13,7 +13,6 @@ public class DatabaseConnection {
 
     private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class.getName());
     private static final Properties props = new Properties();
-    private static Connection singleConnection;
 
     private DatabaseConnection() {}
 
@@ -30,15 +29,21 @@ public class DatabaseConnection {
         }
     }
 
-   
     public static Connection getConnection() throws SQLException {
-        if (singleConnection == null || singleConnection.isClosed()) {
-            singleConnection = DriverManager.getConnection(
-                props.getProperty("db.url"),
-                props.getProperty("db.user"),
-                props.getProperty("db.password")
-            );
+        return DriverManager.getConnection(
+            props.getProperty("db.url"),
+            props.getProperty("db.user"),
+            props.getProperty("db.password")
+        );
+    }
+
+    public static void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.SEVERE, "Erro ao fechar a conexão com o banco de dados.", e);
+            }
         }
-        return singleConnection;
     }
 }

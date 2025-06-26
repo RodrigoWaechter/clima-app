@@ -12,235 +12,210 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
-import com.unisc.projeto.clima_app.util.ComponentFactory;
-
 public class DashboardBuilder {
 
-	private final DashboardFrm view;
+    private final DashboardFrm view;
 
-	public DashboardBuilder(DashboardFrm view) {
-		this.view = view;
-	}
+    public DashboardBuilder(DashboardFrm view) {
+        this.view = view;
+    }
 
-	public void build() {
-		view.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		view.setTitle("Clima App - Dashboard");
-		view.setMinimumSize(new Dimension(1200, 850));
-		view.setJMenuBar(buildMenuBar());
-		view.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    //junta todos os panels
+    public void build() {
+        view.setLayout(new GridBagLayout());
+        view.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		JPanel mainPanel = new JPanel(new GridBagLayout());
-		mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1.0;
-		gbc.insets = new Insets(5, 0, 5, 0);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(5, 0, 5, 0);
 
-		// --- Linha 0: Header ---
-		gbc.gridy = 0;
-		mainPanel.add(buildHeaderPanel(), gbc);
+        gbc.gridy = 0;
+        view.add(buildHeaderPanel(), gbc);
 
-		// --- Linha 1: Informações do Topo (
-		gbc.gridy = 1;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weighty = 0;
-		mainPanel.add(buildTopInfoPanel(), gbc);
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 0;
+        view.add(buildTopInfoPanel(), gbc);
 
-		// --- Linha 2: Previsão Horária ---
-		gbc.gridy = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.ipady = 180;
-		mainPanel.add(buildHourlyForecastPanel(), gbc);
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.ipady = 180;
+        view.add(buildPrevisaoHorariaPanel(), gbc);
 
-		// --- Linha 3: Cards de Resumo ---
-		gbc.ipady = 0;
-		gbc.gridy = 3;
-		mainPanel.add(buildCardsPanel(), gbc);
+        gbc.ipady = 0; 
+        gbc.gridy = 3;
+        view.add(buildResumoPanel(), gbc);
 
-		// --- Linha 4: Tabela de 7 dias ---
-		gbc.gridy = 4;
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weighty = 1.0;
-		mainPanel.add(build7DayForecastPanel(), gbc);
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
+        view.add(buildPrevisao7diasPanel(), gbc);
+    }
 
-		view.setContentPane(mainPanel);
-		view.pack();
-		view.setLocationRelativeTo(null);
-	}
+   //monta o panel do topo com o campo de busca e o botao
+    private JPanel buildHeaderPanel() {
+        JPanel panel = new JPanel(new BorderLayout(20, 0));
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 10, 5));
 
-	private JMenuBar buildMenuBar() {
-		JMenuBar menuBar = new JMenuBar();
-		JMenu menuArquivo = new JMenu("Arquivo");
-		menuArquivo.add(view.getMenuItemDashboard());
-		menuArquivo.add(view.getMenuItemSair());
+        JLabel lblTitle = new JLabel("Dashboard");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        panel.add(lblTitle, BorderLayout.WEST);
 
-		JMenu menuDados = new JMenu("Dados");
-		menuDados.add(view.getMenuItemAtualizar());
-		menuDados.add(view.getMenuItemHistorico());
+        JPanel searchPanel = new JPanel(new BorderLayout(5, 0));
+        searchPanel.add(view.getCampoBusca(), BorderLayout.CENTER);
+        searchPanel.add(view.getBtnBuscar(), BorderLayout.EAST);
+        panel.add(searchPanel, BorderLayout.EAST);
 
-		menuBar.add(menuArquivo);
-		menuBar.add(menuDados);
-		return menuBar;
-	}
+        return panel;
+    }
 
-	private JPanel buildHeaderPanel() {
-		JPanel panel = new JPanel(new BorderLayout(20, 0));
-		panel.setBorder(BorderFactory.createEmptyBorder(0, 5, 10, 5));
+    //junta os condições atuais e a previsão por hora
+    private JPanel buildTopInfoPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
 
-		JLabel lblTitle = ComponentFactory.createLabel("Dashboard", new Font("Segoe UI", Font.BOLD, 24));
-		panel.add(lblTitle, BorderLayout.WEST);
+        gbc.gridx = 0;
+        gbc.weightx = 0.65;
+        panel.add(buildCondicoesAtuaisPanel(), gbc);
 
-		JPanel searchPanel = new JPanel(new BorderLayout(5, 0));
-		searchPanel.add(view.getCampoBusca(), BorderLayout.CENTER);
-		searchPanel.add(view.getBtnBuscar(), BorderLayout.EAST);
-		panel.add(searchPanel, BorderLayout.EAST);
+        gbc.gridx = 1;
+        gbc.weightx = 0.35;
+        panel.add(buildLocalizacaoAtualPanel(), gbc);
 
-		return panel;
-	}
+        return panel;
+    }
+    
+    //monta o panel de condiçoes atuais
+    private JPanel buildCondicoesAtuaisPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBorder(BorderFactory.createTitledBorder("Condições Atuais"));
+        panel.add(view.getLblUltimaAtualizacao(), BorderLayout.SOUTH);
 
-	private JPanel buildTopInfoPanel() {
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weighty = 1.0;
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.insets = new Insets(5, 5, 5, 20);
 
-		gbc.gridx = 0;
-		gbc.weightx = 0.65;
-		panel.add(buildCurrentConditionsPanel(), gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 3;
+        topPanel.add(view.getLblIconeCondicaoAtual(), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridheight = 1;
+        gbc.insets = new Insets(2, 2, 2, 2);
+        topPanel.add(view.getLblTemperaturaAtual(), gbc);
+        gbc.gridx = 2;
+        topPanel.add(view.getLblVento(), gbc);
+        gbc.gridy = 1;
+        topPanel.add(view.getLblUmidade(), gbc);
+        gbc.gridy = 2;
+        topPanel.add(view.getLblPrecipitacao(), gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(8, 5, 5, 5);
+        topPanel.add(view.getLblSensacaoTermica(), gbc);
 
-		gbc.gridx = 1;
-		gbc.weightx = 0.35;
-		panel.add(buildLocationPanel(), gbc);
+        panel.add(topPanel, BorderLayout.CENTER);
+        return panel;
+    }
 
-		return panel;
-	}
+    //monta o panel de localizaçao atual
+    private JPanel buildLocalizacaoAtualPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Localização Atual"));
 
-	private JPanel buildCurrentConditionsPanel() {
-		JPanel panel = new JPanel(new BorderLayout(10, 10));
-		panel.setBorder(BorderFactory.createTitledBorder("Condições Atuais"));
-		panel.add(view.getLblUltimaAtualizacao(), BorderLayout.SOUTH);
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 10));
 
-		JPanel topPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.LINE_START;
-		gbc.insets = new Insets(5, 5, 5, 20);
+        view.getLblLocalizacao().setAlignmentX(Component.LEFT_ALIGNMENT);
+        infoPanel.add(view.getLblLocalizacao());
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        infoPanel.add(new JSeparator());
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridheight = 3;
-		topPanel.add(view.getLblIconeCondicaoAtual(), gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.gridheight = 1;
-		gbc.insets = new Insets(2, 2, 2, 2);
-		topPanel.add(view.getLblTemperaturaAtual(), gbc);
-		gbc.gridx = 2;
-		topPanel.add(view.getLblVento(), gbc);
-		gbc.gridy = 1;
-		topPanel.add(view.getLblUmidade(), gbc);
-		gbc.gridy = 2;
-		topPanel.add(view.getLblPrecipitacao(), gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 3;
-		gbc.gridwidth = 2;
-		gbc.insets = new Insets(8, 5, 5, 5);
-		topPanel.add(view.getLblSensacaoTermica(), gbc);
+        view.getLblLatitude().setAlignmentX(Component.LEFT_ALIGNMENT);
+        infoPanel.add(view.getLblLatitude());
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-		panel.add(topPanel, BorderLayout.CENTER);
-		return panel;
-	}
+        view.getLblLongitude().setAlignmentX(Component.LEFT_ALIGNMENT);
+        infoPanel.add(view.getLblLongitude());
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-	private JScrollPane buildHourlyForecastPanel() {
-		JPanel previsaoContainer = view.getPanelPrevisaoHoraria();
+        view.getLblAltitude().setAlignmentX(Component.LEFT_ALIGNMENT);
+        infoPanel.add(view.getLblAltitude());
+        infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 
-		previsaoContainer.setLayout(new GridBagLayout());
-		previsaoContainer.setBackground(Color.WHITE);
+        view.getLblFusoHorario().setAlignmentX(Component.LEFT_ALIGNMENT);
+        infoPanel.add(view.getLblFusoHorario());
 
-		JScrollPane scrollPane = new JScrollPane(previsaoContainer);
-		scrollPane.setBorder(BorderFactory.createTitledBorder("Previsão para hoje"));
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
-		scrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(infoPanel, BorderLayout.NORTH);
 
-		return scrollPane;
-	}
+        return panel;
+    }
+    
+    //monta o panel de previsao hora a hora
+    private JScrollPane buildPrevisaoHorariaPanel() {
+        JPanel previsaoContainer = view.getPanelPrevisaoHoraria();
 
-	private JPanel buildLocationPanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("Localização Atual"));
+        previsaoContainer.setLayout(new GridBagLayout());
+        previsaoContainer.setBackground(Color.WHITE);
 
-		JPanel infoPanel = new JPanel();
-		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-		infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 10));
+        JScrollPane scrollPane = new JScrollPane(previsaoContainer);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Previsão para hoje"));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
+        scrollPane.getViewport().setBackground(Color.WHITE);
 
-		view.getLblLocalizacao().setAlignmentX(Component.LEFT_ALIGNMENT);
-		infoPanel.add(view.getLblLocalizacao());
-		infoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-		infoPanel.add(new JSeparator());
-		infoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        return scrollPane;
+    }
+    
+    //monta o panel resumo do dia
+    private JPanel buildResumoPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Resumo do Dia"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-		view.getLblLatitude().setAlignmentX(Component.LEFT_ALIGNMENT);
-		infoPanel.add(view.getLblLatitude());
-		infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        view.getCardTempMax().setPreferredSize(new Dimension(200, 120));
+        view.getCardTempMin().setPreferredSize(new Dimension(200, 120));
+        view.getCardVento().setPreferredSize(new Dimension(200, 120));
+        view.getCardPrecipitacao().setPreferredSize(new Dimension(200, 120));
 
-		view.getLblLongitude().setAlignmentX(Component.LEFT_ALIGNMENT);
-		infoPanel.add(view.getLblLongitude());
-		infoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        gbc.gridx = 0;
+        panel.add(view.getCardTempMax(), gbc);
+        gbc.gridx = 1;
+        panel.add(view.getCardTempMin(), gbc);
+        gbc.gridx = 2;
+        panel.add(view.getCardVento(), gbc);
+        gbc.gridx = 3;
+        panel.add(view.getCardPrecipitacao(), gbc);
 
-		view.getLblAltitude().setAlignmentX(Component.LEFT_ALIGNMENT);
-		infoPanel.add(view.getLblAltitude());
-		infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        return panel;
+    }
 
-		view.getLblFusoHorario().setAlignmentX(Component.LEFT_ALIGNMENT);
-		infoPanel.add(view.getLblFusoHorario());
+    //monta o panel com a tabela de previsao pra 7 dias
+    private JPanel buildPrevisao7diasPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createTitledBorder("Previsão para 7 dias"));
 
-		panel.add(infoPanel, BorderLayout.NORTH);
+        JScrollPane scrollPane = new JScrollPane(view.getTabelaPrevisao());
+        scrollPane.getViewport().setBackground(Color.WHITE);
+        panel.add(scrollPane, BorderLayout.CENTER);
 
-		return panel;
-	}
-
-	private JPanel buildCardsPanel() {
-		JPanel panel = new JPanel(new GridBagLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("Resumo do Dia"));
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.weightx = 1.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 5, 5, 5);
-
-		view.getCardTempMax().setPreferredSize(new Dimension(200, 120));
-		view.getCardTempMin().setPreferredSize(new Dimension(200, 120));
-		view.getCardVento().setPreferredSize(new Dimension(200, 120));
-		view.getCardPrecipitacao().setPreferredSize(new Dimension(200, 120));
-
-		gbc.gridx = 0;
-		panel.add(view.getCardTempMax(), gbc);
-		gbc.gridx = 1;
-		panel.add(view.getCardTempMin(), gbc);
-		gbc.gridx = 2;
-		panel.add(view.getCardVento(), gbc);
-		gbc.gridx = 3;
-		panel.add(view.getCardPrecipitacao(), gbc);
-
-		return panel;
-	}
-
-	private JPanel build7DayForecastPanel() {
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setBorder(BorderFactory.createTitledBorder("Previsão para 7 dias"));
-
-		JScrollPane scrollPane = new JScrollPane(view.getTabelaPrevisao());
-		scrollPane.getViewport().setBackground(Color.WHITE);
-		panel.add(scrollPane, BorderLayout.CENTER);
-
-		return panel;
-	}
+        return panel;
+    }
 }
