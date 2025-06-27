@@ -20,10 +20,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import com.unisc.projeto.clima_app.dao.LocalizacaoDAO;
+import com.unisc.projeto.clima_app.dao.PreferenciaDAO;
 import com.unisc.projeto.clima_app.domain.ClimaInfoDTO;
 import com.unisc.projeto.clima_app.domain.DadoDiario;
 import com.unisc.projeto.clima_app.domain.DadoHorario;
 import com.unisc.projeto.clima_app.domain.Localizacao;
+import com.unisc.projeto.clima_app.domain.Preferencia;
 import com.unisc.projeto.clima_app.service.ClimaService;
 import com.unisc.projeto.clima_app.util.IconUtils;
 import com.unisc.projeto.clima_app.util.WeatherCodeUtil;
@@ -58,9 +60,11 @@ public class DashboardController {
     }
 
     private void actionCarregarDadosIniciais() {
-        String cidadeInicial = new LocalizacaoDAO().findLast()
-                .map(Localizacao::getNomeCidade)
-                .orElse("Santa Cruz do Sul");
+        String cidadeInicial = new PreferenciaDAO().findPreferencia()
+                .map(Preferencia::getCidadePreferida)
+                .orElseGet(() -> new LocalizacaoDAO().findLast()
+                        .map(Localizacao::getNomeCidade)
+                        .orElse("Santa Cruz do Sul"));
         
         actionBuscarDadosPorLocalizacao(cidadeInicial);
     }

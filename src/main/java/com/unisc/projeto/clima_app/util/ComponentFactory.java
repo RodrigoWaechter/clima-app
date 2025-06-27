@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -39,11 +40,14 @@ public class ComponentFactory {
     }
     
     public static JButton createButton(String text) {
-        return new JButton(text);
+        JButton button = new JButton(text);
+        button.setFont(FONT_PLAIN_14);
+        return button;
     }
 
     public static JTextField createTextField(int columns) {
         JTextField textField = new JTextField(columns);
+        textField.setFont(FONT_PLAIN_14);
         textField.setBorder(new LineBorder(new Color(153, 153, 153), 1, true));
         return textField;
     }
@@ -85,11 +89,15 @@ public class ComponentFactory {
     }
     
     public static JMenu createMenu(String text) {
-        return new JMenu(text);
+        JMenu menu = new JMenu(text);
+        menu.setFont(FONT_PLAIN_14);
+        return menu;
     }
 
     public static JMenuItem createMenuItem(String text) {
-        return new JMenuItem(text);
+        JMenuItem menuItem = new JMenuItem(text);
+        menuItem.setFont(FONT_PLAIN_14);
+        return menuItem;
     }
     
     public static DatePicker createDatePicker() {
@@ -103,7 +111,13 @@ public class ComponentFactory {
         datePicker.setDate(date);
 		return datePicker;
     }
-    
+
+    public static <E> JComboBox<E> createCombobox(E[]itens){
+    	JComboBox<E> combobox = new JComboBox<E>(itens);
+        combobox.setFont(FONT_PLAIN_14);
+        return combobox;
+    }
+
     public static CardClima createCardClima(String title, String value, String subtext, ImageIcon icon) {
         return new CardClima(title, value, subtext, icon);
     }

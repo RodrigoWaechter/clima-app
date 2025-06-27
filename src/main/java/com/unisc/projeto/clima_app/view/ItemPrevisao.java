@@ -10,6 +10,8 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,7 +22,6 @@ import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
 public class ItemPrevisao extends JPanel {
-   // private final Color BG_COLOR = new Color(255, 255, 255);
     private final Color TEXT_COLOR = new Color(51, 51, 51);
     private final Color HIGHLIGHT_COLOR = new Color(70, 130, 180);
     private final int ARC_WIDTH = 20;
@@ -33,13 +34,11 @@ public class ItemPrevisao extends JPanel {
         setBorder(new EmptyBorder(15, 15, 15, 15));
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Label do horário com estilo moderno
         JLabel lblHorario = new JLabel(horario);
         lblHorario.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblHorario.setForeground(TEXT_COLOR);
         lblHorario.setAlignmentX(CENTER_ALIGNMENT);
 
-        // Ícone centralizado com sombra suave
         JLabel lblIcone = new JLabel(icone) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -90,12 +89,12 @@ public class ItemPrevisao extends JPanel {
         lblTemperatura.setPreferredSize(new Dimension(60, 25));
 
         // Adiciona efeito de hover
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+        addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
                 setSelected(true);
             }
 
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+            public void mouseExited(MouseEvent evt) {
                 setSelected(false);
             }
         });

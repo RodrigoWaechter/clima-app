@@ -7,21 +7,19 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
-import com.formdev.flatlaf.FlatLightLaf;
+import com.unisc.projeto.clima_app.controller.PreferenciaController;
 import com.unisc.projeto.clima_app.util.ComponentFactory;
 
 @SuppressWarnings("serial")
 public class MainFrm extends JFrame {
-
 	private CardLayout cardLayout;
 	private JPanel mainPanel;
 	private DashboardFrm dashboardPanel;
 	private HistoricoFrm historicoPanel;
+	private PreferenciaFrm preferenciaPanel;
 
 	private JMenuItem menuItemDashboard;
 	private JMenuItem menuItemSair;
@@ -32,10 +30,9 @@ public class MainFrm extends JFrame {
 
 	public MainFrm() {
 		setTitle("Clima App");
-		setSize(1200, 850);
+		setSize(1400, 1050);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		initComponents();
 		initLayout();
@@ -45,6 +42,7 @@ public class MainFrm extends JFrame {
 	private void initComponents() {
 		dashboardPanel = new DashboardFrm();
 		historicoPanel = new HistoricoFrm();
+		preferenciaPanel = new PreferenciaFrm();
 
 		menuItemDashboard = ComponentFactory.createMenuItem("Dashboard");
 		menuItemSair = ComponentFactory.createMenuItem("Sair");
@@ -60,6 +58,7 @@ public class MainFrm extends JFrame {
 
 		mainPanel.add(dashboardPanel, "DASHBOARD");
 		mainPanel.add(historicoPanel, "HISTORICO");
+		mainPanel.add(preferenciaPanel, "PREFERENCIAS");
 
 		this.add(mainPanel);
 
@@ -88,24 +87,21 @@ public class MainFrm extends JFrame {
 	}
 
 	private void initListeners() {
-		menuItemDashboard.addActionListener((ActionEvent e) -> cardLayout.show(mainPanel, "DASHBOARD"));
+		menuItemDashboard.addActionListener((ActionEvent e) -> navigateTo("DASHBOARD"));
 		menuItemSair.addActionListener(e -> System.exit(0));
 		menuItemAtualizar.addActionListener((ActionEvent e) -> dashboardPanel.getController().actionAtualizarDados());
-		menuItemHistorico.addActionListener((ActionEvent e) -> cardLayout.show(mainPanel, "HISTORICO"));
-
-		menuItemPreferencias.addActionListener((ActionEvent e) -> JOptionPane.showMessageDialog(this,
-				"A tela de preferências ainda será implementada.", "Em Desenvolvimento",
-				JOptionPane.INFORMATION_MESSAGE));
-
+		menuItemHistorico.addActionListener((ActionEvent e) -> navigateTo("HISTORICO"));
+		menuItemPreferencias.addActionListener((ActionEvent e) -> navigateTo("PREFERENCIAS"));
 		menuItemSobre.addActionListener((ActionEvent e) -> new SobreFrm().setVisible(true));
 	}
+    
+    public void navigateTo(String panelName) {
+        cardLayout.show(mainPanel, panelName);
+    }
 
 	public static void main(String[] args) {
-		try {
-			UIManager.setLookAndFeel(new FlatLightLaf());
-		} catch (Exception ex) {
-			System.err.println("Falha ao inicializar o Look and Feel FlatLaf.");
-		}
+        PreferenciaController.inicializarTemaAplicacao();
+        
 		SwingUtilities.invokeLater(() -> new MainFrm().setVisible(true));
 	}
 }
