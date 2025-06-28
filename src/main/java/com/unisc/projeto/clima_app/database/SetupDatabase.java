@@ -76,7 +76,7 @@ public class SetupDatabase {
             if (sentinelTableExists) {
                 LOGGER.log(Level.INFO, "-> Tabela encontrada. O banco de dados parece já estar populado.");
             } else {
-                LOGGER.log(Level.INFO, "-> Tabela  NÃO encontrada. Criando tabelas no banco...");
+                LOGGER.log(Level.INFO, "-> Tabela  NÃO encontrada. Criando tabelas no bancocrie...");
                 populateDatabase(conn);
             }
         }
