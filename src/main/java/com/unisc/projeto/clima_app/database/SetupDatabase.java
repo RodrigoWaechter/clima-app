@@ -14,23 +14,17 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 public class SetupDatabase {
 
     private static final Logger LOGGER = Logger.getLogger(SetupDatabase.class.getName());
-    private static final String CONFIG_FILE = "/config.properties";
     private static final String SCRIPT_FILE = "/script-clima_app.sql";
 
-  
     public static void runSetup() {
         LOGGER.log(Level.INFO, "--- INICIANDO SETUP DO BANCO DE DADOS ---");
         try {
             checkAndCreateDatabase();
-
             checkAndPopulateTables();
-
             LOGGER.log(Level.INFO, "\n[SUCESSO] O banco de dados está pronto para ser usado.");
-
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "\n[ERRO] Ocorreu uma falha durante o setup do banco de dados.", e);
         } finally {
@@ -70,13 +64,11 @@ public class SetupDatabase {
             }
         }
     }
-    
-  
+
     private static void checkAndPopulateTables() throws SQLException, IOException {
         LOGGER.log(Level.INFO, "Verificando se o banco de dados já contém tabelas...");
         try (Connection conn = DatabaseConnection.getConnection()) {
             boolean anyTableExists = false;
-          
             try (ResultSet rs = conn.getMetaData().getTables(null, null, "%", new String[]{"TABLE"})) {
                 if (rs.next()) {
                     anyTableExists = true;
@@ -91,7 +83,7 @@ public class SetupDatabase {
             }
         }
     }
-  
+
     private static void populateDatabase(Connection conn) throws IOException, SQLException {
         LOGGER.log(Level.INFO, "Executando script SQL...");
         try (Statement stmt = conn.createStatement()) {
@@ -104,14 +96,12 @@ public class SetupDatabase {
                 StringBuilder sb = new StringBuilder();
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Ignora comentários de linha única e linhas em branco no script
                     if (line.trim().isEmpty() || line.trim().startsWith("--")) {
                         continue;
                     }
                     sb.append(line).append(System.lineSeparator());
                 }
-    
-                // Divide os comandos pelo delimitador ';'
+
                 String[] commands = sb.toString().split(";");
                 for (String command : commands) {
                     if (command.trim().isEmpty()) {
@@ -123,13 +113,12 @@ public class SetupDatabase {
             LOGGER.log(Level.INFO, "-> Script executado e banco de dados populado com sucesso.");
         }
     }
-    
-
+   
     private static Properties loadProperties() throws IOException {
         Properties props = new Properties();
-        try (InputStream input = SetupDatabase.class.getResourceAsStream(CONFIG_FILE)) {
+        try (InputStream input = SetupDatabase.class.getClassLoader().getResourceAsStream("config.properties")) {
             if (input == null) {
-                throw new IOException("Arquivo '" + CONFIG_FILE + "' não encontrado em 'src/main/resources'.");
+                throw new IOException("Arquivo 'config.properties' não encontrado..");
             }
             props.load(input);
         }

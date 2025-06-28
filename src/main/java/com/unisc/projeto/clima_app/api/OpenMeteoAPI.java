@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -23,26 +22,7 @@ import java.util.logging.Logger;
 public class OpenMeteoAPI {
 	private static final Logger LOGGER = Logger.getLogger(OpenMeteoAPI.class.getName());
 	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
-	private static final String API_URL_FORMAT;
-
-	// bloco estático porque só precisa carregar o config.properties 1 vez
-	static {
-		Properties props = new Properties();
-		try (InputStream input = OpenMeteoAPI.class.getClassLoader().getResourceAsStream("config.properties")) {
-			if (input == null) {
-				throw new IllegalStateException("Te liga!! Falta o config.properties no classpath.");
-			}
-			props.load(input);
-			API_URL_FORMAT = props.getProperty("api.open-meteo.url");
-			if (API_URL_FORMAT == null || API_URL_FORMAT.isBlank()) {
-				throw new IllegalStateException(
-						"A propriedade 'api.open-meteo.url' está com problemas no config.properties.");
-			}
-		} catch (IOException ex) {
-			LOGGER.log(Level.SEVERE, "Erro ao carregar config.properties", ex);
-			throw new RuntimeException(ex);
-		}
-	}
+	private static final String API_URL_FORMAT = "https://api.open-meteo.com/v1/forecast?latitude=%f&longitude=%f&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto";
 
 	public Optional<DadoHorario> queryClimaAtualFromJSON(Localizacao localizacao) {
 		Optional<JSONObject> jsonOpt = getApiConnection(localizacao);

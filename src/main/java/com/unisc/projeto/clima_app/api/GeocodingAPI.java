@@ -6,7 +6,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -16,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,27 +22,8 @@ import java.util.logging.Logger;
 public class GeocodingAPI {
     private static final Logger LOGGER = Logger.getLogger(GeocodingAPI.class.getName());
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
-    private static final String API_SEARCH_URL;
+    private static final String API_SEARCH_URL = "https://geocoding-api.open-meteo.com/v1/search?name=%s&count=1&language=en&format=json";
 
-	// bloco estático porque só precisa carregar o config.properties 1 vez
-    static {
-        Properties props = new Properties();
-        try (InputStream input = GeocodingAPI.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                throw new IllegalStateException("Te liga!! Falta o config.properties no classpath.");
-            }
-            props.load(input);
-            API_SEARCH_URL = props.getProperty("api.geocoding.url");
-            if (API_SEARCH_URL == null || API_SEARCH_URL.isBlank()) {
-                throw new IllegalStateException("A propriedade 'api.geocoding.url' está com problemas no config.properties.");
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Erro ao carregar config.properties", ex);
-            throw new RuntimeException(ex);
-        }
-    }
-
-  
     public Optional<Localizacao> queryLocalizacaoPorNome(String nomeCidade) {
         List<Localizacao> resultados = queryLocalizacoesFromJSON(nomeCidade);
 
@@ -55,10 +34,10 @@ public class GeocodingAPI {
         }
     }
 
-   //conecta com a api via http request, pega os dados via JSON e cria uma lista de localizacao com os dados
+    //conecta com a api via http request, pega os dados via JSON e cria uma lista de localizacao com os dados
     private List<Localizacao> queryLocalizacoesFromJSON(String nomeDaCidade) {
         List<Localizacao> localizacoesEncontradas = new ArrayList<>();
-        
+
         try {
             String encodedQuery = URLEncoder.encode(nomeDaCidade, StandardCharsets.UTF_8);
             String apiUrl = String.format(API_SEARCH_URL, encodedQuery);
@@ -89,7 +68,7 @@ public class GeocodingAPI {
                 Thread.currentThread().interrupt();
             }
         }
-        
+
         return localizacoesEncontradas;
     }
 }
