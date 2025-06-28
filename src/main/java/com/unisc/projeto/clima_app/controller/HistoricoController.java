@@ -3,13 +3,17 @@ package com.unisc.projeto.clima_app.controller;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.unisc.projeto.clima_app.dao.HistoricoDAO;
 import com.unisc.projeto.clima_app.domain.DadoDiario;
+import com.unisc.projeto.clima_app.util.WeatherCodeUtil;
 import com.unisc.projeto.clima_app.view.HistoricoFrm;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class HistoricoController {
@@ -23,48 +27,68 @@ public class HistoricoController {
         this.view = view;
         this.historicoDAO = new HistoricoDAO();
         initListeners();
+        carregaDados();
     }
     
     private void initListeners() {
         view.getBtnFiltrar().addActionListener(e -> filtrarDados());
     }
-    
+
+    public void carregaDados() {
+        ArrayList<DadoDiario> dados = historicoDAO.findDadosDiarios();
+        System.out.println("Quantidade da dados: " + dados.size());
+
+        DefaultTableModel model = (DefaultTableModel) view.getTabelaHistorico().getModel();
+        model.setRowCount(0);
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("E, dd/MM", new Locale("pt","BR"));
+
+        for (DadoDiario dadoDiario : dados) {
+            Object[] rowData = {
+                    dadoDiario.getLocalizacao().getNomeCidade(),
+                    dadoDiario.getData().format(dayFormatter),
+                    String.format("%.0f° / %.0f°", dadoDiario.getTemperaturaMin(), dadoDiario.getTemperaturaMax()),
+                    String.format("%.1f mm", dadoDiario.getPrecipitacaoTotal()),
+                    String.format("%.0f km/h", dadoDiario.getVelocidadeVentoMax())
+            };
+            model.addRow(rowData);
+        }
+    }
+
     public void filtrarDados() {
         LOGGER.log(Level.INFO, "Iniciando a filtragem de dados...");
         DatePicker pickerInicio = view.getDatePickerInicio();
         DatePicker pickerFim = view.getDatePickerFim();
-        
-        if (pickerInicio.getDate() == null || pickerFim.getDate() == null) {
-            LOGGER.log(Level.WARNING, "Datas de início ou fim não selecionadas.");
-            return;
-        }
-        
+
         LocalDate inicio = pickerInicio.getDate();
         LocalDate fim = pickerFim.getDate();
-        
-        if (inicio.isAfter(fim)) {
-            LOGGER.log(Level.WARNING, "A data de início não pode ser posterior à data de fim.");
-            return;
+
+        List<DadoDiario> dadosDoBanco;
+
+        if (inicio == null || fim == null) {
+            dadosDoBanco = historicoDAO.findDadosDiarios();
+        } else {
+            if (inicio.isAfter(fim)) {
+                JOptionPane.showMessageDialog(null, "A data de início não pode ser posterior à data de fim.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            dadosDoBanco = historicoDAO.findDadosDiarios(inicio, fim);
         }
-        
-        List<DadoDiario> dadosDoBanco = historicoDAO.findDadosDiariosFiltrados(null, inicio, fim);
-        
+
         LOGGER.log(Level.INFO, "Foram encontrados {0} registros no banco de dados.", dadosDoBanco.size());
-        
+
         DefaultTableModel model = (DefaultTableModel) view.getTabelaHistorico().getModel();
         model.setRowCount(0);
-        
-        // --- MUDANÇA: Preenchimento da linha da tabela com os novos dados ---
+
         for (DadoDiario dado : dadosDoBanco) {
             Object[] linha = {
-                dado.getLocalizacao().getNomeCidade(), // Nova informação
-                dado.getData().format(DATE_FORMATTER),
-                String.format("%.1f°C / %.1f°C", dado.getTemperaturaMin(), dado.getTemperaturaMax()),
-                String.format("%.1f", dado.getPrecipitacaoTotal()),
-                String.format("%.1f", dado.getVelocidadeVentoMax()) // Nova informação
+                    dado.getLocalizacao().getNomeCidade(),
+                    dado.getData().format(DATE_FORMATTER),
+                    String.format("%.1f°C / %.1f°C", dado.getTemperaturaMin(), dado.getTemperaturaMax()),
+                    String.format("%.1f", dado.getPrecipitacaoTotal()),
+                    String.format("%.1f", dado.getVelocidadeVentoMax())
             };
             model.addRow(linha);
         }
-        // -----------------------------------------------------------------
     }
+
 }

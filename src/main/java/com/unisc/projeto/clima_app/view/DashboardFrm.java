@@ -59,8 +59,6 @@ public class DashboardFrm extends JPanel {
 		lblLocalizacao = ComponentFactory.createLabel("...", new Font("Segoe UI", Font.BOLD, 18));
 		lblLatitude = ComponentFactory.createLabel("Latitude: ...");
 		lblLongitude = ComponentFactory.createLabel("Longitude: ...");
-		lblAltitude = ComponentFactory.createLabel("Altitude: ...");
-		lblFusoHorario = ComponentFactory.createLabel("Fuso Horário: ...");
 		tabelaPrevisao = ComponentFactory.createTable(new String[] { "Dia", "Condição", "Temp. Máx.", "Temp. Mín.", "Chuva", "Vento" });
 		panelPrevisaoHoraria = ComponentFactory.createPanel();
 		

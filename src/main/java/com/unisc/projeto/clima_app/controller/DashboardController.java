@@ -138,16 +138,16 @@ public class DashboardController {
 
         if (previsaoDiaria == null) return;
 
-        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("E, dd/MM", Locale.of("pt", "BR"));
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("E, dd/MM", new Locale("pt","BR"));
 
         for (DadoDiario dia : previsaoDiaria) {
             Object[] rowData = {
-                dia.getData().format(dayFormatter),
-                WeatherCodeUtil.getWeatherDescription(dia.getCdClima()),
-                String.format("%.0f°", dia.getTemperaturaMax()),
-                String.format("%.0f°", dia.getTemperaturaMin()),
-                String.format("%.1f mm", dia.getPrecipitacaoTotal()),
-                String.format("%.0f km/h", dia.getVelocidadeVentoMax())
+                    dia.getData().format(dayFormatter),
+                    WeatherCodeUtil.getWeatherDescription(dia.getCdClima()),
+                    String.format("%.0f°", dia.getTemperaturaMax()),
+                    String.format("%.0f°", dia.getTemperaturaMin()),
+                    String.format("%.1f mm", dia.getPrecipitacaoTotal()),
+                    String.format("%.0f km/h", dia.getVelocidadeVentoMax())
             };
             model.addRow(rowData);
         }
@@ -171,8 +171,6 @@ public class DashboardController {
         view.getLblLocalizacao().setText(localizacao.getNomeCidade());
         view.getLblLatitude().setText(String.format("Latitude: %.4f", localizacao.getLatitude()));
         view.getLblLongitude().setText(String.format("Longitude: %.4f", localizacao.getLongitude()));
-        view.getLblAltitude().setText("Altitude: N/A");
-        view.getLblFusoHorario().setText("Fuso Horário: N/A");
     }
 
     private void atualizarCardsResumo(List<DadoDiario> previsaoDiaria) {

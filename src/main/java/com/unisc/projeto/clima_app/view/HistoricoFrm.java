@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.unisc.projeto.clima_app.controller.DashboardController;
 import com.unisc.projeto.clima_app.controller.HistoricoController;
 import com.unisc.projeto.clima_app.util.ComponentFactory;
 
@@ -25,11 +26,12 @@ public class HistoricoFrm extends JPanel {
 	private DatePicker datePickerFim;
 	private JButton btnFiltrar;
 	private JTable tabelaHistorico;
+	private HistoricoController controller;
 
 	public HistoricoFrm() {
 		initComponents();
 		initLayout();
-		new HistoricoController(this);
+		controller = new HistoricoController(this);
 	}
 
 	private void initComponents() {
@@ -66,5 +68,9 @@ public class HistoricoFrm extends JPanel {
 
 	public JTable getTabelaHistorico() {
 		return tabelaHistorico;
+	}
+
+	public HistoricoController getController() {
+		return controller;
 	}
 }

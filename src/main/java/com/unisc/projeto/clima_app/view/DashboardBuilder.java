@@ -152,13 +152,6 @@ public class DashboardBuilder {
         infoPanel.add(view.getLblLongitude());
         infoPanel.add(Box.createRigidArea(new Dimension(0, 15)));
 
-        view.getLblAltitude().setAlignmentX(Component.LEFT_ALIGNMENT);
-        infoPanel.add(view.getLblAltitude());
-        infoPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-
-        view.getLblFusoHorario().setAlignmentX(Component.LEFT_ALIGNMENT);
-        infoPanel.add(view.getLblFusoHorario());
-
         panel.add(infoPanel, BorderLayout.NORTH);
 
         return panel;

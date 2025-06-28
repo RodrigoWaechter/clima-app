@@ -90,7 +90,10 @@ public class MainFrm extends JFrame {
 	private void initListeners() {
 		menuItemDashboard.addActionListener((ActionEvent e) -> navigateTo("DASHBOARD"));
 		menuItemSair.addActionListener(e -> System.exit(0));
-		menuItemAtualizar.addActionListener((ActionEvent e) -> dashboardPanel.getController().actionAtualizarDados());
+		menuItemAtualizar.addActionListener((ActionEvent e) -> {
+			dashboardPanel.getController().actionAtualizarDados();
+			historicoPanel.getController().carregaDados();
+		});
 		menuItemHistorico.addActionListener((ActionEvent e) -> navigateTo("HISTORICO"));
 		menuItemPreferencias.addActionListener((ActionEvent e) -> navigateTo("PREFERENCIAS"));
 		menuItemSobre.addActionListener((ActionEvent e) -> new SobreFrm().setVisible(true));
