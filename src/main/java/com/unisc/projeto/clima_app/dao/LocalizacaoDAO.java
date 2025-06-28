@@ -1,5 +1,6 @@
 package com.unisc.projeto.clima_app.dao;
 
+import com.unisc.projeto.clima_app.database.DatabaseConnection;
 import com.unisc.projeto.clima_app.domain.Localizacao;
 import java.sql.*;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.unisc.projeto.clima_app.dao;
+package com.unisc.projeto.clima_app.database;
 
 import java.io.IOException;
 import java.io.InputStream;

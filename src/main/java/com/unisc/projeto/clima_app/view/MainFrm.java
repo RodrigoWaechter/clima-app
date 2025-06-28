@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.unisc.projeto.clima_app.controller.PreferenciaController;
+import com.unisc.projeto.clima_app.database.SetupDatabase;
 import com.unisc.projeto.clima_app.util.ComponentFactory;
 
 @SuppressWarnings("serial")
@@ -100,6 +101,7 @@ public class MainFrm extends JFrame {
     }
 
 	public static void main(String[] args) {
+	    SetupDatabase.runSetup();
         PreferenciaController.inicializarTemaAplicacao();
         
 		SwingUtilities.invokeLater(() -> new MainFrm().setVisible(true));

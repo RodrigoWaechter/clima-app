@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.unisc.projeto.clima_app.database.DatabaseConnection;
 import com.unisc.projeto.clima_app.domain.DadoDiario;
 
 public class DadoDiarioDAO {
