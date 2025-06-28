@@ -10,7 +10,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +17,11 @@ public class SetupDatabase {
 
     private static final Logger LOGGER = Logger.getLogger(SetupDatabase.class.getName());
     private static final String SCRIPT_FILE = "/script-clima_app.sql";
+    
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/clima_app";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = ""; 
+
 
     public static void runSetup() {
         LOGGER.log(Level.INFO, "--- INICIANDO SETUP DO BANCO DE DADOS ---");
@@ -32,17 +36,12 @@ public class SetupDatabase {
         }
     }
 
-    private static void checkAndCreateDatabase() throws IOException, SQLException, ClassNotFoundException {
-        Properties props = loadProperties();
-        String dbUrl = props.getProperty("db.url");
-        String dbUser = props.getProperty("db.user");
-        String dbPassword = props.getProperty("db.password");
-
-        String serverUrl = getServerUrl(dbUrl);
-        String dbName = getDatabaseName(dbUrl);
+    private static void checkAndCreateDatabase() throws SQLException {
+        String serverUrl = getServerUrl(DB_URL);
+        String dbName = getDatabaseName(DB_URL);
 
         LOGGER.log(Level.INFO, "Verificando se o banco de dados ''{0}'' existe...", dbName);
-        try (Connection conn = DriverManager.getConnection(serverUrl, dbUser, dbPassword);
+        try (Connection conn = DriverManager.getConnection(serverUrl, DB_USER, DB_PASSWORD);
              ResultSet rs = conn.getMetaData().getCatalogs()) {
             boolean dbExists = false;
             while (rs.next()) {
@@ -112,17 +111,6 @@ public class SetupDatabase {
             }
             LOGGER.log(Level.INFO, "-> Script executado e banco de dados populado com sucesso.");
         }
-    }
-   
-    private static Properties loadProperties() throws IOException {
-        Properties props = new Properties();
-        try (InputStream input = SetupDatabase.class.getClassLoader().getResourceAsStream("config.properties")) {
-            if (input == null) {
-                throw new IOException("Arquivo 'config.properties' não encontrado..");
-            }
-            props.load(input);
-        }
-        return props;
     }
 
     private static String getServerUrl(String dbUrl) {
