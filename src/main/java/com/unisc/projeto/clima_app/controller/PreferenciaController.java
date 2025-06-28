@@ -2,15 +2,13 @@ package com.unisc.projeto.clima_app.controller;
 
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.unisc.projeto.clima_app.dao.PreferenciaDAO;
+import com.unisc.projeto.clima_app.database.ConfigManager;
 import com.unisc.projeto.clima_app.domain.Preferencia;
 import com.unisc.projeto.clima_app.domain.Tema;
 import com.unisc.projeto.clima_app.view.PreferenciaFrm;
@@ -39,20 +37,8 @@ public class PreferenciaController {
 			view.getComboTema().setSelectedItem(Tema.fromDisplayName(pref.getTemaApp().getDisplayName()));
 		});
 
-		try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
-			Properties props = new Properties();
-			if (input == null) {
-				view.getCampoApiGeo().setText("Erro: config.properties não encontrado.");
-				view.getCampoApiClima().setText("Erro: config.properties não encontrado.");
-				return;
-			}
-			props.load(input);
-			view.getCampoApiGeo().setText(props.getProperty("api.geocoding.url", ""));
-			view.getCampoApiClima().setText(props.getProperty("api.open-meteo.url", ""));
-		} catch (IOException ex) {
-			view.getCampoApiGeo().setText("Erro ao ler arquivo de configurações.");
-			view.getCampoApiClima().setText("Erro ao ler arquivo de configurações.");
-		}
+		view.getCampoApiGeo().setText(ConfigManager.getApiGeocodingUrl());
+		view.getCampoApiClima().setText(ConfigManager.getApiOpenMeteoUrl());
 	}
 
 	public static void inicializarTemaAplicacao() {

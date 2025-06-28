@@ -17,11 +17,9 @@ public class SetupDatabase {
 
     private static final Logger LOGGER = Logger.getLogger(SetupDatabase.class.getName());
     private static final String SCRIPT_FILE = "/script-clima_app.sql";
-    
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/clima_app";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = ""; 
+    private static final String TABELA_TESTE = "localizacoes";
 
+    
 
     public static void runSetup() {
         LOGGER.log(Level.INFO, "--- INICIANDO SETUP DO BANCO DE DADOS ---");
@@ -37,11 +35,13 @@ public class SetupDatabase {
     }
 
     private static void checkAndCreateDatabase() throws SQLException {
-        String serverUrl = getServerUrl(DB_URL);
-        String dbName = getDatabaseName(DB_URL);
+        String serverUrl = ConfigManager.getDbServerUrl();
+        String dbName = ConfigManager.getDbName();
+        String dbUser = ConfigManager.getDbUser();
+        String dbPassword = ConfigManager.getDbPassword();
 
         LOGGER.log(Level.INFO, "Verificando se o banco de dados ''{0}'' existe...", dbName);
-        try (Connection conn = DriverManager.getConnection(serverUrl, DB_USER, DB_PASSWORD);
+        try (Connection conn = DriverManager.getConnection(serverUrl, dbUser, dbPassword);
              ResultSet rs = conn.getMetaData().getCatalogs()) {
             boolean dbExists = false;
             while (rs.next()) {
@@ -50,14 +50,12 @@ public class SetupDatabase {
                     break;
                 }
             }
-
             if (dbExists) {
                 LOGGER.log(Level.INFO, "-> Banco de dados encontrado.");
             } else {
                 LOGGER.log(Level.INFO, "-> Banco de dados NÃO encontrado. Criando...");
                 try (Statement stmt = conn.createStatement()) {
-                    String sql = "CREATE DATABASE " + dbName + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-                    stmt.executeUpdate(sql);
+                    stmt.executeUpdate("CREATE DATABASE " + dbName + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
                     LOGGER.log(Level.INFO, "-> Banco de dados criado com sucesso.");
                 }
             }
@@ -65,26 +63,27 @@ public class SetupDatabase {
     }
 
     private static void checkAndPopulateTables() throws SQLException, IOException {
-        LOGGER.log(Level.INFO, "Verificando se o banco de dados já contém tabelas...");
+        LOGGER.log(Level.INFO, "Verificando se a tabela  ''{0}'' já existe...", TABELA_TESTE);
         try (Connection conn = DatabaseConnection.getConnection()) {
-            boolean anyTableExists = false;
-            try (ResultSet rs = conn.getMetaData().getTables(null, null, "%", new String[]{"TABLE"})) {
+            boolean sentinelTableExists = false;
+           
+            try (ResultSet rs = conn.getMetaData().getTables(null, null, TABELA_TESTE, new String[]{"TABLE"})) {
                 if (rs.next()) {
-                    anyTableExists = true;
+                    sentinelTableExists = true;
                 }
             }
 
-            if (anyTableExists) {
-                LOGGER.log(Level.INFO, "-> Tabelas encontradas. O banco de dados parece já estar populado.");
+            if (sentinelTableExists) {
+                LOGGER.log(Level.INFO, "-> Tabela encontrada. O banco de dados parece já estar populado.");
             } else {
-                LOGGER.log(Level.INFO, "-> Nenhuma tabela encontrada. Populando o banco de dados...");
+                LOGGER.log(Level.INFO, "-> Tabela  NÃO encontrada. Criando tabelas no banco...");
                 populateDatabase(conn);
             }
         }
     }
 
     private static void populateDatabase(Connection conn) throws IOException, SQLException {
-        LOGGER.log(Level.INFO, "Executando script SQL...");
+        LOGGER.log(Level.INFO, "Executando script SQL: {0}", SCRIPT_FILE);
         try (Statement stmt = conn.createStatement()) {
             InputStream is = SetupDatabase.class.getResourceAsStream(SCRIPT_FILE);
             if (is == null) {
@@ -99,34 +98,14 @@ public class SetupDatabase {
                         continue;
                     }
                     sb.append(line).append(System.lineSeparator());
-                }
-
-                String[] commands = sb.toString().split(";");
-                for (String command : commands) {
-                    if (command.trim().isEmpty()) {
-                        continue;
+                    // Executa o comando quando encontra um ponto e vírgula
+                    if (line.trim().endsWith(";")) {
+                        stmt.execute(sb.toString());
+                        sb.setLength(0); // Limpa para o próximo comando
                     }
-                    stmt.execute(command);
                 }
             }
             LOGGER.log(Level.INFO, "-> Script executado e banco de dados populado com sucesso.");
         }
-    }
-
-    private static String getServerUrl(String dbUrl) {
-        int lastSlash = dbUrl.lastIndexOf('/');
-        if (lastSlash == -1) {
-            throw new IllegalArgumentException("Formato de URL do banco de dados inválido. Esperado: jdbc:mysql://host:port/dbname");
-        }
-        return dbUrl.substring(0, lastSlash);
-    }
-
-    private static String getDatabaseName(String dbUrl) {
-        int lastSlash = dbUrl.lastIndexOf('/');
-        if (lastSlash == -1) {
-            throw new IllegalArgumentException("Formato de URL do banco de dados inválido. Esperado: jdbc:mysql://host:port/dbname");
-        }
-        int questionMark = dbUrl.indexOf('?', lastSlash);
-        return (questionMark == -1) ? dbUrl.substring(lastSlash + 1) : dbUrl.substring(lastSlash + 1, questionMark);
     }
 }

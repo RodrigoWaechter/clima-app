@@ -43,8 +43,6 @@ public class PreferenciaFrm extends JPanel {
 
 		campoApiGeo.setEditable(false);
 		campoApiClima.setEditable(false);
-		campoApiGeo.setToolTipText("Este valor é configurado no arquivo config.properties");
-		campoApiClima.setToolTipText("Este valor é configurado no arquivo config.properties");
 	}
 
 	private void initLayout() {
@@ -82,7 +80,7 @@ public class PreferenciaFrm extends JPanel {
 		panelGeral.add(comboTema, gbc);
 
 		JPanel panelApi = ComponentFactory.createPanel(new GridBagLayout());
-		panelApi.setBorder(new TitledBorder("Visualização das URLs da API (config.properties)"));
+		panelApi.setBorder(new TitledBorder("Visualização das URLs da API"));
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
