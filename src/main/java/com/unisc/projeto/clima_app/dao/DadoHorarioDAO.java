@@ -89,11 +89,12 @@ public class DadoHorarioDAO {
 	}
 
 	public Optional<DadoHorario> queryHoraAutal(Integer localizacaoId) {
-		String sql = "SELECT * FROM dados_horarios WHERE id_localizacao = ? ORDER BY horario DESC LIMIT 1";
+		String sql = "SELECT * FROM dados_horarios WHERE id_localizacao = ? AND horario <= ? ORDER BY horario DESC LIMIT 1";
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 				pstmt.setInt(1, localizacaoId);
+				pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
 				try (ResultSet rs = pstmt.executeQuery()) {
 					if (rs.next()) {
 						return Optional.of(mapRowToObject(rs));
@@ -122,5 +123,4 @@ public class DadoHorarioDAO {
 		dado.setCdClima(rs.getInt("cd_clima"));
 		return dado;
 	}
-
 }

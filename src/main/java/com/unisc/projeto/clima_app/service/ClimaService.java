@@ -1,9 +1,9 @@
 package com.unisc.projeto.clima_app.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.unisc.projeto.clima_app.api.GeocodingAPI;
@@ -17,6 +17,7 @@ import com.unisc.projeto.clima_app.domain.DadoHorario;
 import com.unisc.projeto.clima_app.domain.Localizacao;
 
 public class ClimaService {
+	private static final Logger LOGGER = Logger.getLogger(ClimaService.class.getName());
 
 	private final LocalizacaoDAO localizacaoDAO = new LocalizacaoDAO();
 	private final DadoHorarioDAO dadoHorarioDAO = new DadoHorarioDAO();
@@ -28,13 +29,40 @@ public class ClimaService {
 	public ClimaInfoDTO getDadosClimaticos(String nomeCidade) throws Exception {
 		Localizacao localizacao = getLocalizacao(nomeCidade);
 
-		Optional<ClimaInfoDTO> infoAtualizada = atualizaDadosApi(localizacao);
+		Optional<DadoHorario> ultimoDadoHorario = dadoHorarioDAO.queryHoraAutal(localizacao.getIdLocalizacao());
 
-		if (infoAtualizada.isPresent()) {
-			return infoAtualizada.get();
+		boolean dadosRecentesExistem = ultimoDadoHorario.isPresent()
+				&& ultimoDadoHorario.get().getHorario().isAfter(LocalDateTime.now().minusHours(1));
+
+		if (dadosRecentesExistem) {
+			LOGGER.info("Dados recentes encontrados no banco para " + nomeCidade + ". ");
+			return carregarDadosDoBanco(localizacao);
+		} else {
+			LOGGER.info("Dados desatualizados ou inexistentes para " + nomeCidade + ". Buscando na API.");
+
+			try {
+				return atualizaDadosApi(localizacao);
+			} catch (Exception apiException) {
+				LOGGER.severe("Falha ao buscar dados na API: " + apiException.getMessage());
+
+				if (ultimoDadoHorario.isPresent()) {
+					LOGGER.warning("API falhou. Retornando dados antigos do banco para " + nomeCidade);
+					return carregarDadosDoBanco(localizacao);
+				}
+
+				throw new RuntimeException("Falha ao obter dados da API e não há dados no banco para: " + nomeCidade, apiException);
+			}
 		}
-		throw new RuntimeException("Erro com a API, dados climaticos não encontrados.");
+	}
 
+	private ClimaInfoDTO carregarDadosDoBanco(Localizacao localizacao) {
+		int id = localizacao.getIdLocalizacao();
+		DadoHorario dadoAtual = dadoHorarioDAO.queryHoraAutal(id)
+				.orElseThrow(() -> new RuntimeException("Dado atual não encontrado no banco."));
+		List<DadoDiario> previsaoDiaria = dadoDiarioDAO.queryProximos7Dias(id);
+		List<DadoHorario> previsaoHoraria = dadoHorarioDAO.queryProximas24Horas(id);
+
+		return new ClimaInfoDTO(localizacao, dadoAtual, previsaoDiaria, previsaoHoraria);
 	}
 
 	// primeiro tenta pegar a localizaçao informada do banco, se nao, pega da API
@@ -46,46 +74,27 @@ public class ClimaService {
 	}
 
 	// pega os dados da API, salva no banco e depois retorna
-	private Optional<ClimaInfoDTO> atualizaDadosApi(Localizacao localizacao) {
-		try {
-			Optional<DadoHorario> dadoAtualOpt = openMeteoAPI.queryClimaAtualFromJSON(localizacao);
-			List<DadoDiario> previsaoDiaria = openMeteoAPI.queryPrevisaoDiariaFromJSON(localizacao);
-			List<DadoHorario> previsaoHorariaCompleta = openMeteoAPI.queryPrevisaoHorariaFromJSON(localizacao);
+	private ClimaInfoDTO atualizaDadosApi(Localizacao localizacao) throws Exception {
+		Optional<DadoHorario> dadoAtualOpt = openMeteoAPI.queryClimaAtualFromJSON(localizacao);
+		List<DadoDiario> previsaoDiaria = openMeteoAPI.queryPrevisaoDiariaFromJSON(localizacao);
+		List<DadoHorario> previsaoHorariaCompleta = openMeteoAPI.queryPrevisaoHorariaFromJSON(localizacao);
 
-			if (dadoAtualOpt.isEmpty() || previsaoDiaria.isEmpty() || previsaoHorariaCompleta.isEmpty()) {
-				return Optional.empty();
-			}
-
-			// Filtra a lista completa de previsão horária para conter apenas as próximas
-			// 24h
-			LocalDateTime agora = LocalDateTime.now();
-			List<DadoHorario> proximas24Horas = previsaoHorariaCompleta.stream()
-					.filter(dado -> !dado.getHorario().isBefore(agora.withMinute(0).withSecond(0).withNano(0)))
-					.limit(24).collect(Collectors.toList());
-
-			DadoHorario dadoAtual = dadoAtualOpt.get();
-
-			salvarPrevisoes(dadoAtual, previsaoDiaria, previsaoHorariaCompleta);
-
-			return Optional.of(new ClimaInfoDTO(localizacao, dadoAtual, previsaoDiaria, proximas24Horas));
-
-		} catch (Exception e) {
-			return Optional.empty();
+		if (dadoAtualOpt.isEmpty() || previsaoDiaria.isEmpty() || previsaoHorariaCompleta.isEmpty()) {
+			throw new RuntimeException("API retornou dados incompletos ou vazios.");
 		}
-	}
 
-	// salva a previsao diaria e horaria
-	private void salvarPrevisoes(DadoHorario dadoAtual, List<DadoDiario> previsaoDiaria,
-			List<DadoHorario> previsaoHoraria) {
-		try {
-			List<DadoHorario> todosDadosHorarios = new ArrayList<>();
-			todosDadosHorarios.add(dadoAtual);
-			todosDadosHorarios.addAll(previsaoHoraria);
+		// salva a previsao diaria e horaria
+		dadoDiarioDAO.save(previsaoDiaria);
+		dadoHorarioDAO.save(previsaoHorariaCompleta);
+		LOGGER.info("Dados da API para '" + localizacao.getNomeCidade() + "' salvos no banco de dados.");
 
-			dadoDiarioDAO.save(previsaoDiaria);
-			dadoHorarioDAO.save(todosDadosHorarios);
-		} catch (Exception e) {
-			throw new RuntimeException("Falha ao persistir dados da API", e);
-		}
+		// Filtra a lista completa de previsão horária para conter apenas as próximas
+		// 24h
+		LocalDateTime agora = LocalDateTime.now();
+		List<DadoHorario> proximas24Horas = previsaoHorariaCompleta.stream()
+				.filter(dado -> !dado.getHorario().isBefore(agora.withMinute(0).withSecond(0).withNano(0))).limit(24)
+				.collect(Collectors.toList());
+
+		return new ClimaInfoDTO(localizacao, dadoAtualOpt.get(), previsaoDiaria, proximas24Horas);
 	}
 }

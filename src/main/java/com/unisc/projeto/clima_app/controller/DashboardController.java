@@ -51,12 +51,6 @@ public class DashboardController {
     private void initListeners() {
         view.getBtnBuscar().addActionListener(e -> actionBuscarLocalizacao());
         view.getCampoBusca().addActionListener(e -> actionBuscarLocalizacao());
-        view.getLblUltimaAtualizacao().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                actionAtualizarDados();
-            }
-        });
     }
 
     private void actionCarregarDadosIniciais() {

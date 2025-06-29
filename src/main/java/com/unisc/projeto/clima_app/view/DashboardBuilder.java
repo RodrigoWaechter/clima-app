@@ -99,33 +99,41 @@ public class DashboardBuilder {
         panel.setBorder(BorderFactory.createTitledBorder("Condições Atuais"));
         panel.add(view.getLblUltimaAtualizacao(), BorderLayout.SOUTH);
 
-        JPanel topPanel = new JPanel(new GridBagLayout());
+        JPanel contentPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.anchor = GridBagConstraints.LINE_START;
-        gbc.insets = new Insets(5, 5, 5, 20);
-
+        
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridheight = 3;
-        topPanel.add(view.getLblIconeCondicaoAtual(), gbc);
+        gbc.gridheight = 2; 
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.insets = new Insets(0, 5, 0, 15); 
+        contentPanel.add(view.getLblIconeCondicaoAtual(), gbc);
+
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.gridheight = 1;
-        gbc.insets = new Insets(2, 2, 2, 2);
-        topPanel.add(view.getLblTemperaturaAtual(), gbc);
-        gbc.gridx = 2;
-        topPanel.add(view.getLblVento(), gbc);
-        gbc.gridy = 1;
-        topPanel.add(view.getLblUmidade(), gbc);
-        gbc.gridy = 2;
-        topPanel.add(view.getLblPrecipitacao(), gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.insets = new Insets(8, 5, 5, 5);
-        topPanel.add(view.getLblSensacaoTermica(), gbc);
+        gbc.gridheight = 1; 
+        gbc.anchor = GridBagConstraints.LINE_START; 
+        gbc.insets = new Insets(0, 0, 5, 10); 
+        contentPanel.add(view.getLblTemperaturaAtual(), gbc);
 
-        panel.add(topPanel, BorderLayout.CENTER);
+      
+        JPanel detailsPanel = new JPanel();
+        detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS)); 
+
+        detailsPanel.add(view.getLblVento());
+        detailsPanel.add(view.getLblUmidade());
+        detailsPanel.add(view.getLblPrecipitacao());
+        detailsPanel.add(view.getLblSensacaoTermica());
+
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.insets = new Insets(0, 0, 0, 0); 
+        contentPanel.add(detailsPanel, gbc);
+
+      
+
+        panel.add(contentPanel, BorderLayout.CENTER);
         return panel;
     }
 
