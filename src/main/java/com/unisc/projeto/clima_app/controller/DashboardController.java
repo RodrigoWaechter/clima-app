@@ -3,8 +3,6 @@ package com.unisc.projeto.clima_app.controller;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -173,7 +171,7 @@ public class DashboardController {
             view.getCardTempMax().updateContent(String.format("%.0f°C", hoje.getTemperaturaMax()), "Máx. hoje", IconUtils.carregarIconeRedimensionado("/icons/sun.png", 48, 48));
             view.getCardTempMin().updateContent(String.format("%.0f°C", hoje.getTemperaturaMin()), "Mín. hoje", IconUtils.carregarIconeRedimensionado("/icons/cloud.png", 48, 48));
             view.getCardVento().updateContent(String.format("%.0f km/h", hoje.getVelocidadeVentoMax()), "Vento máx.", IconUtils.carregarIconeRedimensionado("/icons/wind.png", 48, 48));
-            view.getCardPrecipitacao().updateContent(String.format("%.1f mm", hoje.getPrecipitacaoTotal()), "Chuva hoje", IconUtils.carregarIconeRedimensionado("/icons/rain.png", 48, 48));
+            view.getCardPrecipitacao().updateContent(String.format("%.1f mm", hoje.getPrecipitacaoTotal()), "Chuva hoje", IconUtils.carregarIconeRedimensionado("/icons/rainfall.png", 48, 48));
         }
     }
 

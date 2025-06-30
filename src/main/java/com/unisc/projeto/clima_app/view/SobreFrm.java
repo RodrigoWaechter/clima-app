@@ -38,7 +38,7 @@ public class SobreFrm extends JFrame {
 				"- Rodrigo Hammes Waechter\n" +
 				"- Vinicius Grahl Copetti\n\n" +
 				"Curso: Ciência da Computação - Universidade de Santa Cruz do Sul\n\n" +
-				"Repositório: /https://github.com/RodrigoWaechter/clima-app"
+				"Repositório: https://github.com/RodrigoWaechter/clima-app"
 		);
 
 		// botão de fechar com destaque
@@ -54,7 +54,7 @@ public class SobreFrm extends JFrame {
 		txtAreaSobre.setBackground(new Color(245, 245, 245));
 		txtAreaSobre.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		// sstilização do botão
+		// estilização do botão
 		btnFechar.setBackground(new Color(220, 53, 69));
 		btnFechar.setForeground(Color.WHITE);
 		btnFechar.setFocusPainted(false);

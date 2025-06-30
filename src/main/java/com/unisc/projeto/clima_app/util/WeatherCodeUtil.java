@@ -45,12 +45,14 @@ public class WeatherCodeUtil {
     //TODO pegar cada icon pra cada clima, dos principais
     public static String getIconPath(int code) {
         if (code == 0 || code == 1) return IconUtils.SUNNY;
-        if (code == 2) return IconUtils.CLOUD;
-        if (code == 3) return IconUtils.CLOUD;
-        if (code >= 45 && code <= 48) return IconUtils.CLOUD;
-        if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return IconUtils.RAIN;
-        if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return "/icons/snow.png";
-        if (code >= 95) return "/icons/storm.png";
-        return IconUtils.CLOUD; // Padrão
+        if (code == 2) return IconUtils.PARTLY_CLOUDY;
+        if (code == 3) return IconUtils.CLOUDY;
+        if (code >= 45 && code <= 48) return IconUtils.FOG;
+        if (code >= 51 && code <= 57) return IconUtils.DRIZZLE;    // garoa
+        if (code >= 61 && code <= 67) return IconUtils.RAIN;
+        if (code >= 80 && code <= 82) return IconUtils.RAINFALL;
+        if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return IconUtils.SNOWING;
+        if (code >= 95) return IconUtils.STORM;
+        return IconUtils.PARTLY_CLOUDY; // Padrão
     }
 }

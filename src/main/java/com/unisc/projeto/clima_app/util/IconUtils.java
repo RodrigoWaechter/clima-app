@@ -8,7 +8,7 @@ public final class IconUtils {
 	public static final String SEARCH = "/icons/search.png";
 	public static final String HUMIDITY = "/icons/humidity.png";
 	public static final String WIND = "/icons/wind.png";
-	public static final String RAIN = "/icons/rain.png";
+	public static final String RAINFALL = "/icons/rainfall.png";
 	public static final String CLOUD = "/icons/cloud.png";
 	public static final String SUNNY = "/icons/sunny.png";
 	public static final String LOC = "/icons/loc.png";
@@ -16,6 +16,16 @@ public final class IconUtils {
 	public static final String GOTA = "/icons/gita.png";
 	public static final String SYNC = "/icons/sync.png";
 	public static final String VENTO = "/icons/vento.png";
+	public static final String SUN = "/icons/sun.png";
+	public static final String SNOWING = "/icons/snowing.png";
+	public static final String STORM = "/icons/storm.png";
+	public static final String CLOUDS = "/icons/cloud.png";
+	public static final String CLOUD2 = "/icons/cloud2.png";
+	public static final String PARTLY_CLOUDY = "/icons/partly_cloudy.png";
+	public static final String CLOUDY = "/icons/cloudy.png";
+	public static final String FOG = "/icons/fog.png";
+	public static final String DRIZZLE = "/icons/drizzle.png";
+	public static final String RAIN = "/icons/rain.png";
 	//TODO ADICIONAR MAIS ICONES
 
 	private IconUtils() {
