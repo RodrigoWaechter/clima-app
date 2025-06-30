@@ -46,7 +46,7 @@ public class DashboardFrm extends JPanel {
 	}
 
 	private void initComponents() {
-		btnBuscar = ComponentFactory.createButton("Buscar");
+		btnBuscar = ComponentFactory.createButton(IconUtils.carregarIconeRedimensionado(IconUtils.SEARCH, 30, 30));
 		campoBusca = ComponentFactory.createTextField(25);
 		lblIconeCondicaoAtual = ComponentFactory.createLabel("...");
 		lblTemperaturaAtual = ComponentFactory.createLabel("...°C", new Font("Segoe UI", Font.BOLD, 48));
@@ -62,11 +62,11 @@ public class DashboardFrm extends JPanel {
 		tabelaPrevisao = ComponentFactory.createTable(new String[] { "Dia", "Condição", "Temp. Máx.", "Temp. Mín.", "Chuva", "Vento" });
 		panelPrevisaoHoraria = ComponentFactory.createPanel();
 		
-		ImageIcon iconePlaceholder = IconUtils.carregarIconeRedimensionado(IconUtils.CLOUD, 48, 48);
-		cardTempMax = new CardClima("Temp. Máxima", "...", "...", iconePlaceholder);
-		cardTempMin = new CardClima("Temp. Mínima", "...", "...", iconePlaceholder);
-		cardVento = new CardClima("Vento", "...", "...", iconePlaceholder);
-		cardPrecipitacao = new CardClima("Precipitação", "...", "...", iconePlaceholder);
+		ImageIcon iconePlaceholder = IconUtils.carregarIconeRedimensionado(IconUtils.SUNNY, 48, 48);
+		cardTempMax = ComponentFactory.createCardClima("Temp. Máxima", "...", "...", iconePlaceholder);
+		cardTempMin = ComponentFactory.createCardClima("Temp. Mínima", "...", "...", iconePlaceholder);
+		cardVento = ComponentFactory.createCardClima("Vento", "...", "...", iconePlaceholder);
+		cardPrecipitacao = ComponentFactory.createCardClima("Precipitação", "...", "...", iconePlaceholder);
 	}
 	
 	private void initLayout() {

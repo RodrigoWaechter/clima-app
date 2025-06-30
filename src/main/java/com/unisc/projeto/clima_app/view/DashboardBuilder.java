@@ -1,7 +1,6 @@
 package com.unisc.projeto.clima_app.view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -16,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.UIManager;
 
 public class DashboardBuilder {
 
@@ -170,14 +170,14 @@ public class DashboardBuilder {
         JPanel previsaoContainer = view.getPanelPrevisaoHoraria();
 
         previsaoContainer.setLayout(new GridBagLayout());
-        previsaoContainer.setBackground(Color.WHITE);
+        previsaoContainer.setOpaque(false);
 
         JScrollPane scrollPane = new JScrollPane(previsaoContainer);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Previsão para hoje"));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.getHorizontalScrollBar().setUnitIncrement(16);
-        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.getViewport().setBackground(UIManager.getColor("Panel.background"));
 
         return scrollPane;
     }
@@ -214,7 +214,7 @@ public class DashboardBuilder {
         panel.setBorder(BorderFactory.createTitledBorder("Previsão para 7 dias"));
 
         JScrollPane scrollPane = new JScrollPane(view.getTabelaPrevisao());
-        scrollPane.getViewport().setBackground(Color.WHITE);
+        scrollPane.getViewport().setBackground(UIManager.getColor("Table.background"));
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;

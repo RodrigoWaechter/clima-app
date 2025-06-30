@@ -42,11 +42,10 @@ public class WeatherCodeUtil {
         return WEATHER_CODES.getOrDefault(code, "Desconhecido");
     }
     
-    //TODO pegar cada icon pra cada clima, dos principais
     public static String getIconPath(int code) {
         if (code == 0 || code == 1) return IconUtils.SUNNY;
         if (code == 2) return IconUtils.PARTLY_CLOUDY;
-        if (code == 3) return IconUtils.CLOUDY;
+        if (code == 3) return IconUtils.CLOUD2;
         if (code >= 45 && code <= 48) return IconUtils.FOG;
         if (code >= 51 && code <= 57) return IconUtils.DRIZZLE;    // garoa
         if (code >= 61 && code <= 67) return IconUtils.RAIN;

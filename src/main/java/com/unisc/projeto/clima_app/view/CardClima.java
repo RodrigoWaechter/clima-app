@@ -20,14 +20,14 @@ import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
 public class CardClima extends JPanel {
-    private final Color BG_COLOR = new Color(255, 255, 255);
-    private final Color TEXT_COLOR = new Color(51, 51, 51);
-    private final Color SECONDARY_COLOR = new Color(120, 120, 120);
-    private final Color HIGHLIGHT_COLOR = new Color(70, 130, 180);
+    // --- MUDANÇA: Cores fixas removidas ---
+    // As cores agora serão lidas do UIManager
+
     private final int CORNER_RADIUS = 20;
     private final int SHADOW_SIZE = 5;
     private boolean isHovered = false;
@@ -36,8 +36,19 @@ public class CardClima extends JPanel {
     private JLabel lblIcone;
     private JLabel lblTemperatura;
     private JLabel lblHorario;
+    
+    // --- MUDANÇA: Variáveis para armazenar as cores do tema ---
+    private Color bgColor;
+    private Color textColor;
+    private Color secondaryColor;
+    private Color highlightColor;
+    private Color borderColor;
+    private Color shadowColor;
 
     public CardClima(String titulo, String temperatura, String horario, Icon icone) {
+        // --- MUDANÇA: updateUI() é chamado para carregar as cores iniciais ---
+        updateUI(); 
+        
         setLayout(new BorderLayout());
         setOpaque(false);
         setBorder(new EmptyBorder(15, 20, 15, 20));
@@ -47,11 +58,46 @@ public class CardClima extends JPanel {
         setupLayout();
         addHoverEffect();
     }
+    
+    // --- MUDANÇA: Novo método para carregar cores do Look and Feel ---
+    private void updateColorsFromUIManager() {
+        bgColor = UIManager.getColor("Panel.background");
+        textColor = UIManager.getColor("Label.foreground");
+        secondaryColor = UIManager.getColor("Label.disabledForeground");
+        highlightColor = UIManager.getColor("Component.focusColor");
+        if (highlightColor == null) {
+             highlightColor = new Color(70, 130, 180); // Fallback
+        }
+        borderColor = UIManager.getColor("Button.borderColor");
+        if (borderColor == null) {
+            borderColor = new Color(220, 220, 220); // Fallback
+        }
+        shadowColor = UIManager.getColor("Separator.shadow");
+         if (shadowColor == null) {
+            shadowColor = new Color(0, 0, 0, 20); // Fallback
+        }
+    }
+    
+    // --- MUDANÇA: Sobrescrevendo updateUI para reagir a mudanças de tema ---
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        updateColorsFromUIManager();
+        // Garante que os componentes filhos também sejam atualizados se necessário
+        if (lblTitulo != null) {
+            configureComponentColors();
+            repaint();
+        }
+    }
+    
+    private void configureComponentColors() {
+        lblTitulo.setForeground(textColor);
+        lblHorario.setForeground(secondaryColor);
+    }
 
     private void configureComponents(String titulo, String temperatura, String horario, Icon icone) {
         lblTitulo = new JLabel(titulo);
         lblTitulo.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 14));
-        lblTitulo.setForeground(TEXT_COLOR);
         
         lblIcone = new JLabel(icone);
 
@@ -61,10 +107,9 @@ public class CardClima extends JPanel {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 
-                // Gradiente para a temperatura
                 GradientPaint gp = new GradientPaint(
-                    0, 0, isHovered ? HIGHLIGHT_COLOR : new Color(40, 40, 40),
-                    getWidth(), 0, isHovered ? new Color(100, 149, 237) : new Color(60, 60, 60));
+                    0, 0, isHovered ? highlightColor : textColor,
+                    getWidth(), 0, isHovered ? highlightColor.brighter() : textColor.brighter());
                 g2.setPaint(gp);
                 
                 g2.setFont(getFont());
@@ -76,11 +121,12 @@ public class CardClima extends JPanel {
             }
         };
         lblTemperatura.setFont(new Font("Segoe UI", Font.BOLD, 32));
-        lblTemperatura.setForeground(new Color(0, 0, 0, 0));
+        lblTemperatura.setForeground(new Color(0, 0, 0, 0)); // A cor é controlada pelo paintComponent
         
         lblHorario = new JLabel(horario);
         lblHorario.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lblHorario.setForeground(SECONDARY_COLOR);
+        
+        configureComponentColors();
     }
 
     private void setupLayout() {
@@ -123,46 +169,45 @@ public class CardClima extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // Importante para limpar a área antes de desenhar
+        super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        // Desenha sombra se o mouse estiver sobre o card
         if (isHovered) {
-            g2.setColor(new Color(0, 0, 0, 20));
+            g2.setColor(shadowColor);
             g2.fillRoundRect(SHADOW_SIZE, SHADOW_SIZE, 
                           getWidth() - SHADOW_SIZE, getHeight() - SHADOW_SIZE, 
                           CORNER_RADIUS, CORNER_RADIUS);
         }
         
-        // Desenha o fundo do card
         Paint oldPaint = g2.getPaint();
         if (isHovered) {
             GradientPaint gp = new GradientPaint(
-                0, 0, new Color(245, 248, 255),
-                getWidth(), getHeight(), new Color(235, 242, 252));
+                0, 0, bgColor.brighter(),
+                getWidth(), getHeight(), bgColor);
             g2.setPaint(gp);
         } else {
-            g2.setColor(BG_COLOR);
+            g2.setColor(bgColor);
         }
         g2.fillRoundRect(0, 0, getWidth() - SHADOW_SIZE, getHeight() - SHADOW_SIZE, 
                        CORNER_RADIUS, CORNER_RADIUS);
         g2.setPaint(oldPaint);
         
-        // Desenha a borda
-        g2.setColor(isHovered ? new Color(200, 220, 255) : new Color(220, 220, 220));
+        g2.setColor(isHovered ? highlightColor : borderColor);
         g2.setStroke(new BasicStroke(1f));
         g2.drawRoundRect(0, 0, getWidth() - SHADOW_SIZE - 1, getHeight() - SHADOW_SIZE - 1, 
                         CORNER_RADIUS, CORNER_RADIUS);
         
         g2.dispose();
     }
+    
     public void updateContent(String temperatura, String horario, Icon icone) {
         this.lblTemperatura.setText(temperatura);
         this.lblHorario.setText(horario);
         this.lblIcone.setIcon(icone);
         this.repaint();
     }
+    
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(200, 160);

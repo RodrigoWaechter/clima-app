@@ -168,10 +168,10 @@ public class DashboardController {
     private void atualizarCardsResumo(List<DadoDiario> previsaoDiaria) {
         if (!previsaoDiaria.isEmpty()) {
             DadoDiario hoje = previsaoDiaria.get(0);
-            view.getCardTempMax().updateContent(String.format("%.0f°C", hoje.getTemperaturaMax()), "Máx. hoje", IconUtils.carregarIconeRedimensionado("/icons/sun.png", 48, 48));
-            view.getCardTempMin().updateContent(String.format("%.0f°C", hoje.getTemperaturaMin()), "Mín. hoje", IconUtils.carregarIconeRedimensionado("/icons/cloud.png", 48, 48));
-            view.getCardVento().updateContent(String.format("%.0f km/h", hoje.getVelocidadeVentoMax()), "Vento máx.", IconUtils.carregarIconeRedimensionado("/icons/wind.png", 48, 48));
-            view.getCardPrecipitacao().updateContent(String.format("%.1f mm", hoje.getPrecipitacaoTotal()), "Chuva hoje", IconUtils.carregarIconeRedimensionado("/icons/rainfall.png", 48, 48));
+            view.getCardTempMax().updateContent(String.format("%.0f°C", hoje.getTemperaturaMax()), "Máx. hoje", IconUtils.carregarIconeRedimensionado(IconUtils.SUN, 48, 48));
+            view.getCardTempMin().updateContent(String.format("%.0f°C", hoje.getTemperaturaMin()), "Mín. hoje", IconUtils.carregarIconeRedimensionado(IconUtils.CLOUD2, 48, 48));
+            view.getCardVento().updateContent(String.format("%.0f km/h", hoje.getVelocidadeVentoMax()), "Vento máx.", IconUtils.carregarIconeRedimensionado(IconUtils.WIND, 48, 48));
+            view.getCardPrecipitacao().updateContent(String.format("%.1f mm", hoje.getPrecipitacaoTotal()), "Chuva hoje", IconUtils.carregarIconeRedimensionado(IconUtils.RAINFALL, 48, 48));
         }
     }
 

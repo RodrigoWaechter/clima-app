@@ -26,7 +26,6 @@ public final class IconUtils {
 	public static final String FOG = "/icons/fog.png";
 	public static final String DRIZZLE = "/icons/drizzle.png";
 	public static final String RAIN = "/icons/rain.png";
-	//TODO ADICIONAR MAIS ICONES
 
 	private IconUtils() {
 	}
