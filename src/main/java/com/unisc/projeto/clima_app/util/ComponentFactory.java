@@ -1,6 +1,5 @@
 package com.unisc.projeto.clima_app.util;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.LayoutManager;
 import java.time.LocalDate;
@@ -14,9 +13,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -29,14 +28,14 @@ public class ComponentFactory {
 	private static final Font FONT_BOLD_14 = new Font("Segoe UI", Font.BOLD, 14);
 	private static final Font FONT_PLAIN_14 = new Font("Segoe UI", Font.PLAIN, 14);
 
+	public static JLabel createLabel(String text) {
+		return createLabel(text, FONT_PLAIN_14);
+	}
+	
 	public static JLabel createLabel(String text, Font font) {
 		JLabel label = new JLabel(text);
 		label.setFont(font);
 		return label;
-	}
-
-	public static JLabel createLabel(String text) {
-		return createLabel(text, FONT_PLAIN_14);
 	}
 
 	public static JButton createButton(String text) {
@@ -57,7 +56,6 @@ public class ComponentFactory {
 	public static JTextField createTextField(int columns) {
 		JTextField textField = new JTextField(columns);
 		textField.setFont(FONT_PLAIN_14);
-		textField.setBorder(new LineBorder(new Color(153, 153, 153), 1, true));
 		return textField;
 	}
 
@@ -126,7 +124,22 @@ public class ComponentFactory {
 		combobox.setFont(FONT_PLAIN_14);
 		return combobox;
 	}
-
+	
+	public static JTextArea createTextArea() {
+		return createTextArea(10, 40, false, true);
+	}
+	
+	public static JTextArea createTextArea(int rows, int columns, boolean editable, boolean lineWrap) {
+		JTextArea txtArea = new JTextArea();
+		txtArea.setFont(FONT_PLAIN_14);
+		txtArea.setEditable(editable);
+		txtArea.setRows(rows);
+		txtArea.setColumns(columns);
+		txtArea.setLineWrap(lineWrap);
+		txtArea.setWrapStyleWord(true);
+		return txtArea;
+	}
+	
 	public static CardClima createCardClima(String title, String value, String subtext, ImageIcon icon) {
 		return new CardClima(title, value, subtext, icon);
 	}

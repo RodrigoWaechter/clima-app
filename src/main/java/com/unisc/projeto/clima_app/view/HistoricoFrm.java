@@ -18,6 +18,7 @@ import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.unisc.projeto.clima_app.controller.DashboardController;
 import com.unisc.projeto.clima_app.controller.HistoricoController;
 import com.unisc.projeto.clima_app.util.ComponentFactory;
+import com.unisc.projeto.clima_app.util.IconUtils;
 
 @SuppressWarnings("serial")
 public class HistoricoFrm extends JPanel {
@@ -37,7 +38,7 @@ public class HistoricoFrm extends JPanel {
 	private void initComponents() {
 		datePickerInicio = ComponentFactory.createDatePicker(LocalDate.now());
 		datePickerFim = ComponentFactory.createDatePicker(LocalDate.now());
-		btnFiltrar = ComponentFactory.createButton("Filtrar");
+		btnFiltrar = ComponentFactory.createButton(IconUtils.carregarIconeRedimensionado(IconUtils.SEARCH, 30, 30));
 		tabelaHistorico = ComponentFactory.createTable( new String[] { "Cidade", "Data", "Temp. Mín/Máx", "Precipitação (mm)", "Vento Máx (km/h)" });
 	}
 

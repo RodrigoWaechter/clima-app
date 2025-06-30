@@ -25,9 +25,6 @@ import javax.swing.border.EmptyBorder;
 
 @SuppressWarnings("serial")
 public class CardClima extends JPanel {
-    // --- MUDANÇA: Cores fixas removidas ---
-    // As cores agora serão lidas do UIManager
-
     private final int CORNER_RADIUS = 20;
     private final int SHADOW_SIZE = 5;
     private boolean isHovered = false;
@@ -37,7 +34,6 @@ public class CardClima extends JPanel {
     private JLabel lblTemperatura;
     private JLabel lblHorario;
     
-    // --- MUDANÇA: Variáveis para armazenar as cores do tema ---
     private Color bgColor;
     private Color textColor;
     private Color secondaryColor;
@@ -46,7 +42,6 @@ public class CardClima extends JPanel {
     private Color shadowColor;
 
     public CardClima(String titulo, String temperatura, String horario, Icon icone) {
-        // --- MUDANÇA: updateUI() é chamado para carregar as cores iniciais ---
         updateUI(); 
         
         setLayout(new BorderLayout());
@@ -59,7 +54,6 @@ public class CardClima extends JPanel {
         addHoverEffect();
     }
     
-    // --- MUDANÇA: Novo método para carregar cores do Look and Feel ---
     private void updateColorsFromUIManager() {
         bgColor = UIManager.getColor("Panel.background");
         textColor = UIManager.getColor("Label.foreground");
@@ -78,12 +72,10 @@ public class CardClima extends JPanel {
         }
     }
     
-    // --- MUDANÇA: Sobrescrevendo updateUI para reagir a mudanças de tema ---
     @Override
     public void updateUI() {
         super.updateUI();
         updateColorsFromUIManager();
-        // Garante que os componentes filhos também sejam atualizados se necessário
         if (lblTitulo != null) {
             configureComponentColors();
             repaint();

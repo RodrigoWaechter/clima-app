@@ -15,7 +15,7 @@ public class SobreFrm extends JFrame {
 
 	public SobreFrm() {
 		setTitle("Clima App");
-		setSize(500, 490);
+		setSize(700, 500);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -24,10 +24,7 @@ public class SobreFrm extends JFrame {
 	}
 
 	private void initComponents() {
-		txtAreaSobre = new JTextArea(10, 40);
-		txtAreaSobre.setEditable(false);
-		txtAreaSobre.setLineWrap(true);
-		txtAreaSobre.setWrapStyleWord(true);
+		txtAreaSobre = ComponentFactory.createTextArea();
 
 		txtAreaSobre.setText(
 				"Aplicativo de Previsão do Tempo\n\n" +
@@ -41,24 +38,9 @@ public class SobreFrm extends JFrame {
 				"Repositório: https://github.com/RodrigoWaechter/clima-app"
 		);
 
-		// botão de fechar com destaque
 		btnFechar = ComponentFactory.createButton("Fechar");
 		btnFechar.addActionListener(e -> dispose());
 
-		estilizarComponentes();
-	}
-
-	private void estilizarComponentes() {
-		// estilização do texto
-		txtAreaSobre.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-		txtAreaSobre.setBackground(new Color(245, 245, 245));
-		txtAreaSobre.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-		// estilização do botão
-		btnFechar.setBackground(new Color(220, 53, 69));
-		btnFechar.setForeground(Color.WHITE);
-		btnFechar.setFocusPainted(false);
-		btnFechar.setFont(new Font("Segoe UI", Font.BOLD, 12));
 	}
 
 	private void initLayout() {
