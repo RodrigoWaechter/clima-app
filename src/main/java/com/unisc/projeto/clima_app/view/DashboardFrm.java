@@ -2,7 +2,6 @@ package com.unisc.projeto.clima_app.view;
 
 import java.awt.Font;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,7 +49,7 @@ public class DashboardFrm extends JPanel {
 		campoBusca = ComponentFactory.createTextField(25);
 		lblIconeCondicaoAtual = ComponentFactory.createLabel("...");
 		lblTemperaturaAtual = ComponentFactory.createLabel("...°C", new Font("Segoe UI", Font.BOLD, 48));
-		lblCondicaoAtualDescricao = ComponentFactory.createLabel("...");
+		lblCondicaoAtualDescricao = ComponentFactory.createLabel("Condição: ...");
 		lblSensacaoTermica = ComponentFactory.createLabel("Sensação térmica: ...");
 		lblUmidade = ComponentFactory.createLabel("Umidade: ...");
 		lblVento = ComponentFactory.createLabel("Vento: ...");
@@ -62,11 +61,10 @@ public class DashboardFrm extends JPanel {
 		tabelaPrevisao = ComponentFactory.createTable(new String[] { "Dia", "Condição", "Temp. Máx.", "Temp. Mín.", "Chuva", "Vento" });
 		panelPrevisaoHoraria = ComponentFactory.createPanel();
 		
-		ImageIcon iconePlaceholder = IconUtils.carregarIconeRedimensionado(IconUtils.SUNNY, 48, 48);
-		cardTempMax = ComponentFactory.createCardClima("Temp. Máxima", "...", "...", iconePlaceholder);
-		cardTempMin = ComponentFactory.createCardClima("Temp. Mínima", "...", "...", iconePlaceholder);
-		cardVento = ComponentFactory.createCardClima("Vento", "...", "...", iconePlaceholder);
-		cardPrecipitacao = ComponentFactory.createCardClima("Precipitação", "...", "...", iconePlaceholder);
+		cardTempMax = ComponentFactory.createCardClima("Temp. Máxima", "...", "...", null);
+		cardTempMin = ComponentFactory.createCardClima("Temp. Mínima", "...", "...", null);
+		cardVento = ComponentFactory.createCardClima("Vento", "...", "...", null);
+		cardPrecipitacao = ComponentFactory.createCardClima("Precipitação", "...", "...", null);
 	}
 	
 	private void initLayout() {

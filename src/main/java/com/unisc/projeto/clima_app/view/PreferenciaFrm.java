@@ -2,12 +2,15 @@ package com.unisc.projeto.clima_app.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -45,81 +48,105 @@ public class PreferenciaFrm extends JPanel {
 		campoApiClima.setEditable(false);
 	}
 
+
 	private void initLayout() {
 		this.setLayout(new BorderLayout(10, 10));
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		JPanel mainPanel = ComponentFactory.createPanel(new GridBagLayout());
+		// header/basicamente so tem o titulo
+		JPanel headerPanel = ComponentFactory.createPanel(new BorderLayout());
+		headerPanel.setBorder(new EmptyBorder(0, 5, 10, 5));
+		JLabel lblTitle = new JLabel("Preferências");
+		lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+		headerPanel.add(lblTitle, BorderLayout.WEST);
+		
+		
+		JPanel contentPanel = ComponentFactory.createPanel(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(5, 5, 5, 5);
-		gbc.anchor = GridBagConstraints.WEST;
+		gbc.anchor = GridBagConstraints.NORTHWEST; 
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1;
 
+		// preferencias gerais/ basicamente a cidade e o tema
 		JPanel panelGeral = ComponentFactory.createPanel(new GridBagLayout());
 		panelGeral.setBorder(new TitledBorder("Geral"));
+		
+		GridBagConstraints gbcGeral = new GridBagConstraints();
+		gbcGeral.insets = new Insets(5, 5, 5, 5);
+		gbcGeral.anchor = GridBagConstraints.WEST;
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 0;
-		gbc.fill = GridBagConstraints.NONE;
-		panelGeral.add(ComponentFactory.createLabel("Cidade Preferida:"), gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.weightx = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panelGeral.add(campoCidadePreferida, gbc);
+		gbcGeral.gridx = 0;
+		gbcGeral.gridy = 0;
+		gbcGeral.weightx = 0;
+		gbcGeral.fill = GridBagConstraints.NONE;
+		panelGeral.add(ComponentFactory.createLabel("Cidade Preferida:"), gbcGeral);
+		
+		gbcGeral.gridx = 1;
+		gbcGeral.weightx = 1;
+		gbcGeral.fill = GridBagConstraints.HORIZONTAL;
+		panelGeral.add(campoCidadePreferida, gbcGeral);
 
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.weightx = 0;
-		gbc.fill = GridBagConstraints.NONE;
-		panelGeral.add(ComponentFactory.createLabel("Tema do Aplicativo:"), gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		gbc.weightx = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panelGeral.add(comboTema, gbc);
+		gbcGeral.gridx = 0;
+		gbcGeral.gridy = 1;
+		gbcGeral.weightx = 0;
+		gbcGeral.fill = GridBagConstraints.NONE;
+		panelGeral.add(ComponentFactory.createLabel("Tema do Aplicativo:"), gbcGeral);
+		
+		gbcGeral.gridx = 1;
+		gbcGeral.weightx = 1;
+		gbcGeral.fill = GridBagConstraints.HORIZONTAL;
+		panelGeral.add(comboTema, gbcGeral);
 
+		// URLs das APIs
 		JPanel panelApi = ComponentFactory.createPanel(new GridBagLayout());
 		panelApi.setBorder(new TitledBorder("Visualização das URLs da API"));
+		
+		GridBagConstraints gbcApi = new GridBagConstraints();
+		gbcApi.insets = new Insets(5, 5, 5, 5);
+		gbcApi.anchor = GridBagConstraints.WEST;
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.weightx = 0;
-		gbc.fill = GridBagConstraints.NONE;
-		panelApi.add(ComponentFactory.createLabel("URL API Geocoding:"), gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		gbc.weightx = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panelApi.add(campoApiGeo, gbc);
+		gbcApi.gridx = 0;
+		gbcApi.gridy = 0;
+		gbcApi.weightx = 0;
+		gbcApi.fill = GridBagConstraints.NONE;
+		panelApi.add(ComponentFactory.createLabel("URL API Geocoding:"), gbcApi);
+		
+		gbcApi.gridx = 1;
+		gbcApi.weightx = 1;
+		gbcApi.fill = GridBagConstraints.HORIZONTAL;
+		panelApi.add(campoApiGeo, gbcApi);
 
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.weightx = 0;
-		gbc.fill = GridBagConstraints.NONE;
-		panelApi.add(ComponentFactory.createLabel("URL API Clima:"), gbc);
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		gbc.weightx = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		panelApi.add(campoApiClima, gbc);
-
-		gbc.gridx = 0;
+		gbcApi.gridx = 0;
+		gbcApi.gridy = 1;
+		gbcApi.weightx = 0;
+		gbcApi.fill = GridBagConstraints.NONE;
+		panelApi.add(ComponentFactory.createLabel("URL API Clima:"), gbcApi);
+		
+		gbcApi.gridx = 1;
+		gbcApi.weightx = 1;
+		gbcApi.fill = GridBagConstraints.HORIZONTAL;
+		panelApi.add(campoApiClima, gbcApi);
+		
 		gbc.gridy = 0;
-		gbc.weightx = 1;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		mainPanel.add(panelGeral, gbc);
-		gbc.gridx = 0;
+		contentPanel.add(panelGeral, gbc);
 		gbc.gridy = 1;
-		mainPanel.add(panelApi, gbc);
+		contentPanel.add(panelApi, gbc);
+
+		
+		gbc.gridy = 2;
+		gbc.weighty = 1.0;
+		contentPanel.add(Box.createVerticalGlue(), gbc);
 
 		JPanel buttonPanel = ComponentFactory.createPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
 		buttonPanel.add(btnSalvar);
 
-		this.add(mainPanel, BorderLayout.NORTH);
+		this.add(headerPanel, BorderLayout.NORTH);
+		this.add(contentPanel, BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 	}
+
 
 	public PreferenciaController getController() {
 		return controller;

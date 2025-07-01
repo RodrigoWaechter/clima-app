@@ -1,5 +1,6 @@
 package com.unisc.projeto.clima_app.util;
 
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.LayoutManager;
 import java.time.LocalDate;
@@ -83,7 +84,26 @@ public class ComponentFactory {
 			}
 		};
 		table.setModel(tableModel);
-
+		//pra colocar o icone na tabela
+		table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				
+				if (value instanceof Object[]) {
+					Object[] cellData = (Object[]) value;
+					setIcon((ImageIcon) cellData[0]);
+					setText((String) cellData[1]);
+					setHorizontalAlignment(SwingConstants.CENTER); 
+					setIconTextGap(5); 
+				} else {
+					setIcon(null);
+					setText(value != null ? value.toString() : "");
+					setHorizontalAlignment(SwingConstants.CENTER);
+				}
+				return this;
+			}
+		});
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		table.setDefaultRenderer(Object.class, centerRenderer);

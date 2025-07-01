@@ -124,6 +124,8 @@ public class DashboardBuilder {
         detailsPanel.add(view.getLblUmidade());
         detailsPanel.add(view.getLblPrecipitacao());
         detailsPanel.add(view.getLblSensacaoTermica());
+        detailsPanel.add(view.getLblCondicaoAtualDescricao());
+
 
         gbc.gridx = 2;
         gbc.gridy = 0;

@@ -42,12 +42,12 @@ public class WeatherCodeUtil {
         return WEATHER_CODES.getOrDefault(code, "Desconhecido");
     }
     
-    public static String getIconPath(int code) {
+    public static String getIcon(int code) {
         if (code == 0 || code == 1) return IconUtils.SUNNY;
         if (code == 2) return IconUtils.PARTLY_CLOUDY;
         if (code == 3) return IconUtils.CLOUD2;
         if (code >= 45 && code <= 48) return IconUtils.FOG;
-        if (code >= 51 && code <= 57) return IconUtils.DRIZZLE;    // garoa
+        if (code >= 51 && code <= 57) return IconUtils.DRIZZLE;    
         if (code >= 61 && code <= 67) return IconUtils.RAIN;
         if (code >= 80 && code <= 82) return IconUtils.RAINFALL;
         if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return IconUtils.SNOWING;

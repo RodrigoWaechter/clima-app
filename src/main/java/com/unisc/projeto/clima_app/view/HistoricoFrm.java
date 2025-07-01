@@ -1,21 +1,17 @@
 package com.unisc.projeto.clima_app.view;
 
 import java.awt.BorderLayout;
-import java.awt.Font; // Importação necessária para a fonte
+import java.awt.Font;
 import java.time.LocalDate;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants; // Importação para alinhamento
-import javax.swing.table.DefaultTableCellRenderer; // Importação para renderização
-import javax.swing.table.DefaultTableModel;
 
 import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DatePickerSettings;
-import com.unisc.projeto.clima_app.controller.DashboardController;
 import com.unisc.projeto.clima_app.controller.HistoricoController;
 import com.unisc.projeto.clima_app.util.ComponentFactory;
 import com.unisc.projeto.clima_app.util.IconUtils;
@@ -44,13 +40,20 @@ public class HistoricoFrm extends JPanel {
 
 	private void initLayout() {
 		this.setLayout(new BorderLayout());
+        this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+		JPanel headerPanel = new JPanel(new BorderLayout());
+		JLabel lblTitle = ComponentFactory.createLabel("Histórico");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+		headerPanel.add(lblTitle, BorderLayout.WEST);
 		JPanel filterPanel = new JPanel();
 		filterPanel.add(ComponentFactory.createLabel("De:"));
 		filterPanel.add(datePickerInicio);
 		filterPanel.add(ComponentFactory.createLabel("Até:"));
 		filterPanel.add(datePickerFim);
 		filterPanel.add(btnFiltrar);
-		this.add(filterPanel, BorderLayout.NORTH);
+		headerPanel.add(filterPanel);
+		this.add(headerPanel, BorderLayout.NORTH);
 		this.add(new JScrollPane(tabelaHistorico), BorderLayout.CENTER);
 	}
 
