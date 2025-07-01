@@ -26,6 +26,8 @@ public final class IconUtils {
 	public static final String FOG = "/icons/fog.png";
 	public static final String DRIZZLE = "/icons/drizzle.png";
 	public static final String RAIN = "/icons/rain.png";
+	public static final String TERMOMETER_HOT = "/icons/termometer_hot.png";
+	public static final String TERMOMETER_COLD = "/icons/termometer_cold.png";
 
 	private IconUtils() {
 	}

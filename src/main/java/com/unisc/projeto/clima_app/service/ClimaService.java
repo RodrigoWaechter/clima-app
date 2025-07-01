@@ -88,8 +88,7 @@ public class ClimaService {
 		dadoHorarioDAO.save(previsaoHorariaCompleta);
 		LOGGER.info("Dados da API para '" + localizacao.getNomeCidade() + "' salvos no banco de dados.");
 
-		// Filtra a lista completa de previsão horária para conter apenas as próximas
-		// 24h
+		// Filtra a lista completa de previsão horária para conter apenas as próximas 24h
 		LocalDateTime agora = LocalDateTime.now();
 		List<DadoHorario> proximas24Horas = previsaoHorariaCompleta.stream()
 				.filter(dado -> !dado.getHorario().isBefore(agora.withMinute(0).withSecond(0).withNano(0))).limit(24)

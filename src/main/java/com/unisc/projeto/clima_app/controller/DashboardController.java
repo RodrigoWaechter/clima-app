@@ -61,6 +61,7 @@ public class DashboardController {
         actionBuscarDadosPorLocalizacao(cidadeInicial);
     }
     
+    //metodo principal pra buscar os dados
     private void actionBuscarDadosPorLocalizacao(String nomeCidade) {
         setLoading(true); 
         
@@ -81,6 +82,7 @@ public class DashboardController {
         });
     }
     
+    //action do botao buscar
     public void actionBuscarLocalizacao() {
         String nomeCidade = view.getCampoBusca().getText();
         if (nomeCidade != null && !nomeCidade.trim().isEmpty()) {
@@ -90,6 +92,7 @@ public class DashboardController {
         }
     }
 
+    //action de atualizar os dados
     public void actionAtualizarDados() {
         if (localizacaoAtual != null) {
             actionBuscarDadosPorLocalizacao(localizacaoAtual.getNomeCidade());
@@ -168,8 +171,8 @@ public class DashboardController {
     private void atualizarCardsResumo(List<DadoDiario> previsaoDiaria) {
         if (!previsaoDiaria.isEmpty()) {
             DadoDiario hoje = previsaoDiaria.get(0);
-            view.getCardTempMax().updateContent(String.format("%.0f°C", hoje.getTemperaturaMax()), "Máx. hoje", IconUtils.carregarIconeRedimensionado(IconUtils.SUN, 48, 48));
-            view.getCardTempMin().updateContent(String.format("%.0f°C", hoje.getTemperaturaMin()), "Mín. hoje", IconUtils.carregarIconeRedimensionado(IconUtils.CLOUD2, 48, 48));
+            view.getCardTempMax().updateContent(String.format("%.0f°C", hoje.getTemperaturaMax()), "Máx. hoje", IconUtils.carregarIconeRedimensionado(IconUtils.TERMOMETER_HOT, 48, 48));
+            view.getCardTempMin().updateContent(String.format("%.0f°C", hoje.getTemperaturaMin()), "Mín. hoje", IconUtils.carregarIconeRedimensionado(IconUtils.TERMOMETER_COLD, 48, 48));
             view.getCardVento().updateContent(String.format("%.0f km/h", hoje.getVelocidadeVentoMax()), "Vento máx.", IconUtils.carregarIconeRedimensionado(IconUtils.WIND, 48, 48));
             view.getCardPrecipitacao().updateContent(String.format("%.1f mm", hoje.getPrecipitacaoTotal()), "Chuva hoje", IconUtils.carregarIconeRedimensionado(IconUtils.RAINFALL, 48, 48));
         }
