@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 public class OpenMeteoAPI {
 	private static final Logger LOGGER = Logger.getLogger(OpenMeteoAPI.class.getName());
 	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
-	private static final String API_URL_FORMAT = "https://api.open-meteo.com/v1/forecast?latitude=%f&longitude=%f&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto";
+	private static final String API_URL_FORMAT = "https://api.open-meteo.com/v1/forecast?latitude=%f&longitude=%f&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&forecast_days=7&past_days=0";
 
 	public Optional<DadoHorario> queryClimaAtualFromJSON(Localizacao localizacao) {
 		Optional<JSONObject> jsonOpt = getApiConnection(localizacao);
@@ -122,7 +122,10 @@ public class OpenMeteoAPI {
 
 	//  retorna um JSON com os dados via http request da api, é usado nos outros metodos
 	private Optional<JSONObject> getApiConnection(Localizacao localizacao) {
-		String apiUrl = String.format(Locale.US, API_URL_FORMAT, localizacao.getLatitude(), localizacao.getLongitude());
+		String apiUrl = String.format(Locale.US, API_URL_FORMAT, 
+									  localizacao.getLatitude(), 
+									  localizacao.getLongitude());
+		
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).build();
 		try {
 			HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());

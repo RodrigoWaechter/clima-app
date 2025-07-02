@@ -22,13 +22,17 @@ public class DadoDiarioDAO {
         if (dados == null || dados.isEmpty()) return;
 
         Connection conn = null;
-        String sql = "INSERT INTO dados_diarios (id_localizacao, data, temperatura_max, temperatura_min, precipitacao_total, velocidade_vento_max, cd_clima) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
+        String sql = "INSERT INTO dados_diarios (id_localizacao, data, temperatura_max, temperatura_min, precipitacao_total, velocidade_vento_max, cd_clima) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?) "
+                + "ON DUPLICATE KEY UPDATE "
+                + "temperatura_max = VALUES(temperatura_max), "
+                + "temperatura_min = VALUES(temperatura_min), "
+                + "precipitacao_total = VALUES(precipitacao_total), "
+                + "velocidade_vento_max = VALUES(velocidade_vento_max), "
+                + "cd_clima = VALUES(cd_clima)";
         try {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false); // Inicia a transação
-
-            deleteByLocalizacaoId(conn, dados.get(0).getLocalizacao().getIdLocalizacao());
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 for (DadoDiario dado : dados) {
@@ -57,13 +61,6 @@ public class DadoDiarioDAO {
         }
     }
 
-    private void deleteByLocalizacaoId(Connection conn, int localizacaoId) throws SQLException {
-        String sql = "DELETE FROM dados_diarios WHERE id_localizacao = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, localizacaoId);
-            pstmt.executeUpdate();
-        }
-    }
 
 	public List<DadoDiario> queryProximos7Dias(Integer localizacaoId) {
 		List<DadoDiario> dados = new ArrayList<>();

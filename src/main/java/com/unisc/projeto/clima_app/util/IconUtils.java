@@ -2,6 +2,7 @@ package com.unisc.projeto.clima_app.util;
 
 import java.awt.Image;
 import java.net.URL;
+
 import javax.swing.ImageIcon;
 
 public final class IconUtils {

@@ -23,21 +23,26 @@ public class HistoricoDAO {
         String sql = "SELECT d.*, l.nome_cidade FROM dados_diarios d " +
                 "INNER JOIN localizacoes l ON d.id_localizacao = l.id_localizacao " +
                 "WHERE d.data BETWEEN ? AND ? ORDER BY l.nome_cidade, d.data";
- 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setDate(1, Date.valueOf(dataInicio));
-            pstmt.setDate(2, Date.valueOf(dataFim));
+                pstmt.setDate(1, Date.valueOf(dataInicio));
+                pstmt.setDate(2, Date.valueOf(dataFim));
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    DadoDiario dado = mapRowToObject(rs);
-                    dados.add(dado);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        DadoDiario dado = mapRowToObject(rs);
+                        dados.add(dado);
+                    }
                 }
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erro ao buscar histórico com filtros.", e);
+        } finally {
+            DatabaseConnection.closeConnection(conn);
         }
         return dados;
     }
@@ -45,19 +50,21 @@ public class HistoricoDAO {
     public ArrayList<DadoDiario> findDadosDiarios() {
         ArrayList<DadoDiario> dados = new ArrayList<>();
         String sql = "SELECT * FROM dados_diarios d INNER JOIN localizacoes l ON d.id_localizacao = l.id_localizacao";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    DadoDiario dado = mapRowToObject(rs);
-                    dados.add(dado);
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        DadoDiario dado = mapRowToObject(rs);
+                        dados.add(dado);
+                    }
                 }
             }
-
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erro ao buscar histórico", e);
+        } finally {
+            DatabaseConnection.closeConnection(conn);
         }
         return dados;
     }
@@ -76,6 +83,4 @@ public class HistoricoDAO {
 		dado.setVelocidadeVentoMax(rs.getDouble("velocidade_vento_max"));
 		return dado;
 	}
-
-
 }

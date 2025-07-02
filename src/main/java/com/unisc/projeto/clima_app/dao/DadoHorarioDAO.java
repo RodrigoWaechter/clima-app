@@ -23,13 +23,20 @@ public class DadoHorarioDAO {
         if (dados == null || dados.isEmpty()) return;
 
         Connection conn = null;
-        String sql = "INSERT INTO dados_horarios (id_localizacao, horario, temperatura, umidade_relativa, sensacao_termica, velocidade_vento, direcao_vento, precipitacao, cd_clima) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO dados_horarios (id_localizacao, horario, temperatura, umidade_relativa, sensacao_termica, velocidade_vento, direcao_vento, precipitacao, cd_clima) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                + "ON DUPLICATE KEY UPDATE "
+                + "temperatura = VALUES(temperatura), "
+                + "umidade_relativa = VALUES(umidade_relativa), "
+                + "sensacao_termica = VALUES(sensacao_termica), "
+                + "velocidade_vento = VALUES(velocidade_vento), "
+                + "direcao_vento = VALUES(direcao_vento), "
+                + "precipitacao = VALUES(precipitacao), "
+                + "cd_clima = VALUES(cd_clima)";
 
         try {
             conn = DatabaseConnection.getConnection();
-            conn.setAutoCommit(false); // Inicia transação
-
-            deleteByLocalizacaoId(conn, dados.get(0).getLocalizacao().getIdLocalizacao());
+            conn.setAutoCommit(false); 
 
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 for (DadoHorario dado : dados) {
@@ -46,7 +53,7 @@ public class DadoHorarioDAO {
                 }
                 pstmt.executeBatch();
             }
-            conn.commit(); // Confirma transação
+            conn.commit(); 
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erro na transação de salvar previsão horária, executando rollback.", e);
             try {
@@ -59,20 +66,13 @@ public class DadoHorarioDAO {
             DatabaseConnection.closeConnection(conn);
         }
     }
-    
-    private void deleteByLocalizacaoId(Connection conn, int localizacaoId) throws SQLException {
-        String sql = "DELETE FROM dados_horarios WHERE id_localizacao = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, localizacaoId);
-            pstmt.executeUpdate();
-        }
-    }
 
 	public List<DadoHorario> queryProximas24Horas(int localizacaoId) {
 		List<DadoHorario> dados = new ArrayList<>();
 		String sql = "SELECT * FROM dados_horarios WHERE id_localizacao = ? AND horario >= ? ORDER BY horario ASC LIMIT 24";
+		Connection conn = null;
 		try {
-			Connection conn = DatabaseConnection.getConnection();
+			conn = DatabaseConnection.getConnection();
 			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 				pstmt.setInt(1, localizacaoId);
 				pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
@@ -84,14 +84,17 @@ public class DadoHorarioDAO {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Erro ao buscar previsão de 24 horas do banco.", e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
 		}
 		return dados;
 	}
 
 	public Optional<DadoHorario> queryHoraAutal(Integer localizacaoId) {
 		String sql = "SELECT * FROM dados_horarios WHERE id_localizacao = ? AND horario <= ? ORDER BY horario DESC LIMIT 1";
+		Connection conn = null;
 		try {
-			Connection conn = DatabaseConnection.getConnection();
+			conn = DatabaseConnection.getConnection();
 			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 				pstmt.setInt(1, localizacaoId);
 				pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
@@ -103,6 +106,8 @@ public class DadoHorarioDAO {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Erro ao buscar último dado horário para a localização ID: " + localizacaoId, e);
+		} finally {
+			DatabaseConnection.closeConnection(conn);
 		}
 		return Optional.empty();
 	}

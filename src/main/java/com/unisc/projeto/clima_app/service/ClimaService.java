@@ -1,7 +1,10 @@
 package com.unisc.projeto.clima_app.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -79,21 +82,33 @@ public class ClimaService {
 		List<DadoDiario> previsaoDiaria = openMeteoAPI.queryPrevisaoDiariaFromJSON(localizacao);
 		List<DadoHorario> previsaoHorariaCompleta = openMeteoAPI.queryPrevisaoHorariaFromJSON(localizacao);
 
-		if (dadoAtualOpt.isEmpty() || previsaoDiaria.isEmpty() || previsaoHorariaCompleta.isEmpty()) {
+		if (dadoAtualOpt.isEmpty() || previsaoDiaria.isEmpty()) {
 			throw new RuntimeException("API retornou dados incompletos ou vazios.");
 		}
+        
+        DadoHorario dadoHorarioAtual = dadoAtualOpt.get();
+
+        previsaoHorariaCompleta.add(dadoHorarioAtual);
+
+        // Usa um Map para remover automaticamente os registos duplicados,
+        // mantendo o último que foi adicionado (o mais recente).
+        Map<LocalDateTime, DadoHorario> dadosUnicosMap = new LinkedHashMap<>();
+        for (DadoHorario dado : previsaoHorariaCompleta) {
+            dadosUnicosMap.put(dado.getHorario(), dado);
+        }
+        List<DadoHorario> dadosHorariosUnicos = new ArrayList<>(dadosUnicosMap.values());
 
 		// salva a previsao diaria e horaria
 		dadoDiarioDAO.save(previsaoDiaria);
-		dadoHorarioDAO.save(previsaoHorariaCompleta);
+		dadoHorarioDAO.save(dadosHorariosUnicos); // Salva a lista já sem duplicados
 		LOGGER.info("Dados da API para '" + localizacao.getNomeCidade() + "' salvos no banco de dados.");
 
 		// Filtra a lista completa de previsão horária para conter apenas as próximas 24h
 		LocalDateTime agora = LocalDateTime.now();
-		List<DadoHorario> proximas24Horas = previsaoHorariaCompleta.stream()
+		List<DadoHorario> proximas24Horas = dadosHorariosUnicos.stream()
 				.filter(dado -> !dado.getHorario().isBefore(agora.withMinute(0).withSecond(0).withNano(0))).limit(24)
 				.collect(Collectors.toList());
 
-		return new ClimaInfoDTO(localizacao, dadoAtualOpt.get(), previsaoDiaria, proximas24Horas);
+		return new ClimaInfoDTO(localizacao, dadoHorarioAtual, previsaoDiaria, proximas24Horas);
 	}
 }

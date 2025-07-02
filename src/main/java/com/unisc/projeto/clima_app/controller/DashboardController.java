@@ -31,8 +31,6 @@ import com.unisc.projeto.clima_app.view.DashboardFrm;
 import com.unisc.projeto.clima_app.view.ItemPrevisao;
 
 public class DashboardController {
-	private static final Logger LOGGER = Logger.getLogger(DashboardController.class.getName());
-
 	private final DashboardFrm view;
 	private final ClimaService climaService;
 	private Localizacao localizacaoAtual;
