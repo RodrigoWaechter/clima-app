@@ -14,10 +14,11 @@ public class LocalizacaoDAO {
 
 	public Optional<Localizacao> findByName(String nomeCidade) {
 		Connection conn = null;
-		String sql = "SELECT * FROM localizacoes WHERE nome_cidade = ?";
+		StringBuilder sql = new StringBuilder(); 
+		sql.append("SELECT * FROM localizacoes WHERE nome_cidade = ?");
 		try {
 			conn = DatabaseConnection.getConnection();
-			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 				pstmt.setString(1, nomeCidade);
 				try (ResultSet rs = pstmt.executeQuery()) {
 					if (rs.next()) {
@@ -36,10 +37,11 @@ public class LocalizacaoDAO {
 
 	public Optional<Localizacao> findLast() {
 		Connection conn = null;
-		String sql = "SELECT * FROM localizacoes ORDER BY data_hora_registro DESC LIMIT 1";
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM localizacoes ORDER BY data_hora_registro DESC LIMIT 1");
 		try {
 			conn = DatabaseConnection.getConnection();
-			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 				try (ResultSet rs = pstmt.executeQuery()) {
 					if (rs.next()) {
 						return Optional.of(mapRowToObject(rs));
@@ -56,10 +58,11 @@ public class LocalizacaoDAO {
 
 	public Localizacao save(Localizacao localizacao) {
 	    Connection conn = null;
-		String sql = "INSERT INTO localizacoes (nome_cidade, latitude, longitude, data_hora_registro) VALUES (?, ?, ?, ?)";
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO localizacoes (nome_cidade, latitude, longitude, data_hora_registro) VALUES (?, ?, ?, ?)");
 		try {
 			conn = DatabaseConnection.getConnection();
-			try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			try (PreparedStatement pstmt = conn.prepareStatement(sql.toString(), Statement.RETURN_GENERATED_KEYS)) {
 
 				pstmt.setString(1, localizacao.getNomeCidade());
 				pstmt.setDouble(2, localizacao.getLatitude());

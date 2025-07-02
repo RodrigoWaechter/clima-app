@@ -22,19 +22,20 @@ public class DadoDiarioDAO {
         if (dados == null || dados.isEmpty()) return;
 
         Connection conn = null;
-        String sql = "INSERT INTO dados_diarios (id_localizacao, data, temperatura_max, temperatura_min, precipitacao_total, velocidade_vento_max, cd_clima) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?) "
-                + "ON DUPLICATE KEY UPDATE "
-                + "temperatura_max = VALUES(temperatura_max), "
-                + "temperatura_min = VALUES(temperatura_min), "
-                + "precipitacao_total = VALUES(precipitacao_total), "
-                + "velocidade_vento_max = VALUES(velocidade_vento_max), "
-                + "cd_clima = VALUES(cd_clima)";
+        StringBuilder sql = new StringBuilder(); 
+        sql.append("INSERT INTO dados_diarios (id_localizacao, data, temperatura_max, temperatura_min, precipitacao_total, velocidade_vento_max, cd_clima) ");
+        sql.append("VALUES (?, ?, ?, ?, ?, ?, ?) "); 
+        sql.append("ON DUPLICATE KEY UPDATE "); 
+        sql.append("temperatura_max = VALUES(temperatura_max), "); 
+        sql.append("temperatura_min = VALUES(temperatura_min), "); 
+        sql.append("precipitacao_total = VALUES(precipitacao_total), "); 
+        sql.append("velocidade_vento_max = VALUES(velocidade_vento_max), "); 
+        sql.append("cd_clima = VALUES(cd_clima)"); 
         try {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false); // Inicia a transação
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
                 for (DadoDiario dado : dados) {
                     pstmt.setInt(1, dado.getLocalizacao().getIdLocalizacao());
                     pstmt.setDate(2, Date.valueOf(dado.getData()));
@@ -64,12 +65,13 @@ public class DadoDiarioDAO {
 
 	public List<DadoDiario> queryProximos7Dias(Integer localizacaoId) {
 		List<DadoDiario> dados = new ArrayList<>();
-		String sql = "SELECT * FROM dados_diarios WHERE id_localizacao = ? AND data >= ? ORDER BY data ASC LIMIT 7";
+		StringBuilder sql = new StringBuilder(); 
+		sql.append("SELECT * FROM dados_diarios WHERE id_localizacao = ? AND data >= ? ORDER BY data ASC LIMIT 7");
 
 		try {
 			Connection conn = DatabaseConnection.getConnection();
 
-			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 				pstmt.setInt(1, localizacaoId);
 				pstmt.setDate(2, Date.valueOf(LocalDate.now()));
 

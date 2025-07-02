@@ -23,22 +23,23 @@ public class DadoHorarioDAO {
         if (dados == null || dados.isEmpty()) return;
 
         Connection conn = null;
-        String sql = "INSERT INTO dados_horarios (id_localizacao, horario, temperatura, umidade_relativa, sensacao_termica, velocidade_vento, direcao_vento, precipitacao, cd_clima) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) "
-                + "ON DUPLICATE KEY UPDATE "
-                + "temperatura = VALUES(temperatura), "
-                + "umidade_relativa = VALUES(umidade_relativa), "
-                + "sensacao_termica = VALUES(sensacao_termica), "
-                + "velocidade_vento = VALUES(velocidade_vento), "
-                + "direcao_vento = VALUES(direcao_vento), "
-                + "precipitacao = VALUES(precipitacao), "
-                + "cd_clima = VALUES(cd_clima)";
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO dados_horarios (id_localizacao, horario, temperatura, umidade_relativa, sensacao_termica, velocidade_vento, direcao_vento, precipitacao, cd_clima) ");
+        sql.append("VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+        sql.append("ON DUPLICATE KEY UPDATE ");
+        sql.append("temperatura = VALUES(temperatura), ");
+        sql.append("umidade_relativa = VALUES(umidade_relativa), ");
+        sql.append("sensacao_termica = VALUES(sensacao_termica), ");
+        sql.append("velocidade_vento = VALUES(velocidade_vento), ");
+        sql.append("direcao_vento = VALUES(direcao_vento), ");
+        sql.append("precipitacao = VALUES(precipitacao), ");
+        sql.append("cd_clima = VALUES(cd_clima)");
 
         try {
             conn = DatabaseConnection.getConnection();
             conn.setAutoCommit(false); 
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
                 for (DadoHorario dado : dados) {
                     pstmt.setInt(1, dado.getLocalizacao().getIdLocalizacao());
                     pstmt.setTimestamp(2, Timestamp.valueOf(dado.getHorario()));
@@ -69,11 +70,12 @@ public class DadoHorarioDAO {
 
 	public List<DadoHorario> queryProximas24Horas(int localizacaoId) {
 		List<DadoHorario> dados = new ArrayList<>();
-		String sql = "SELECT * FROM dados_horarios WHERE id_localizacao = ? AND horario >= ? ORDER BY horario ASC LIMIT 24";
+		StringBuilder sql = new StringBuilder(); 
+		sql.append("SELECT * FROM dados_horarios WHERE id_localizacao = ? AND horario >= ? ORDER BY horario ASC LIMIT 24");
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 				pstmt.setInt(1, localizacaoId);
 				pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
 				try (ResultSet rs = pstmt.executeQuery()) {
@@ -91,11 +93,12 @@ public class DadoHorarioDAO {
 	}
 
 	public Optional<DadoHorario> queryHoraAutal(Integer localizacaoId) {
-		String sql = "SELECT * FROM dados_horarios WHERE id_localizacao = ? AND horario <= ? ORDER BY horario DESC LIMIT 1";
+		StringBuilder sql = new StringBuilder(); 
+		sql.append("SELECT * FROM dados_horarios WHERE id_localizacao = ? AND horario <= ? ORDER BY horario DESC LIMIT 1");
 		Connection conn = null;
 		try {
 			conn = DatabaseConnection.getConnection();
-			try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 				pstmt.setInt(1, localizacaoId);
 				pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
 				try (ResultSet rs = pstmt.executeQuery()) {

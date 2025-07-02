@@ -16,11 +16,12 @@ public class PreferenciaDAO {
     private static final Logger LOGGER = Logger.getLogger(PreferenciaDAO.class.getName());
 
     public Optional<Preferencia> findPreferencia() {
-        String sql = "SELECT * FROM configuracoes LIMIT 1";
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT * FROM configuracoes LIMIT 1");
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql);
+            try (PreparedStatement pstmt = conn.prepareStatement(sql.toString());
                  ResultSet rs = pstmt.executeQuery()) {
 
                 if (rs.next()) {                   
@@ -49,11 +50,12 @@ public class PreferenciaDAO {
     }
 
     private void insert(Preferencia preferencia) {
-        String sql = "INSERT INTO configuracoes (cidade_preferida, tema_app) VALUES (?, ?)";
+        StringBuilder sql = new StringBuilder(); 
+        sql.append("INSERT INTO configuracoes (cidade_preferida, tema_app) VALUES (?, ?)");
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
                 pstmt.setString(1, preferencia.getCidadePreferida());
                 pstmt.setString(2, preferencia.getTemaApp().getDisplayName());
                 pstmt.executeUpdate();
@@ -67,11 +69,12 @@ public class PreferenciaDAO {
     }
 
     private void update(Preferencia preferencia) {
-        String sql = "UPDATE configuracoes SET cidade_preferida = ?, tema_app = ? WHERE id_configuracao = ?";
+        StringBuilder sql = new StringBuilder(); 
+        sql.append("UPDATE configuracoes SET cidade_preferida = ?, tema_app = ? WHERE id_configuracao = ?");
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
                 pstmt.setString(1, preferencia.getCidadePreferida());
                 pstmt.setString(2, preferencia.getTemaApp().getDisplayName());
                 pstmt.setInt(3, preferencia.getIdPreferencia());
