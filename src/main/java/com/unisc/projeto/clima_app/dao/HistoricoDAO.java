@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,19 +19,33 @@ public class HistoricoDAO {
 
     private static final Logger LOGGER = Logger.getLogger(HistoricoDAO.class.getName());
 
-    public ArrayList<DadoDiario> findDadosDiarios(LocalDate dataInicio, LocalDate dataFim) {
-        ArrayList<DadoDiario> dados = new ArrayList<>();
-        String sql = "SELECT d.*, l.nome_cidade FROM dados_diarios d " +
-                "INNER JOIN localizacoes l ON d.id_localizacao = l.id_localizacao " +
-                "WHERE d.data BETWEEN ? AND ? ORDER BY l.nome_cidade, d.data";
+    public List<DadoDiario> findDadosDiarios(LocalDate dataInicio, LocalDate dataFim) {
+        return findDadosDiarios(dataInicio, dataFim, null); 
+    }
+
+    public List<DadoDiario> findDadosDiarios(LocalDate dataInicio, LocalDate dataFim, String nomeCidade) {
+    	List<DadoDiario> dados = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT d.*, l.nome_cidade FROM dados_diarios d ");
+        sql.append("INNER JOIN localizacoes l ON d.id_localizacao = l.id_localizacao ");
+        sql.append("WHERE d.data BETWEEN ? AND ?");
+        
+        if (nomeCidade != null && !nomeCidade.isEmpty()) {
+            sql.append(" AND l.nome_cidade LIKE ?");
+        }
+        sql.append(" ORDER BY l.nome_cidade, d.data");
         
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
                 pstmt.setDate(1, Date.valueOf(dataInicio));
                 pstmt.setDate(2, Date.valueOf(dataFim));
+                
+                if (nomeCidade != null && !nomeCidade.isEmpty()) {
+                    pstmt.setString(3, "%" + nomeCidade + "%");
+                }
 
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
@@ -47,13 +62,28 @@ public class HistoricoDAO {
         return dados;
     }
 
-    public ArrayList<DadoDiario> findDadosDiarios() {
-        ArrayList<DadoDiario> dados = new ArrayList<>();
-        String sql = "SELECT * FROM dados_diarios d INNER JOIN localizacoes l ON d.id_localizacao = l.id_localizacao";
+    public List<DadoDiario> findDadosDiarios() {
+        return findDadosDiarios(null); 
+    }
+
+    public List<DadoDiario> findDadosDiarios(String nomeCidade) {
+        List<DadoDiario> dados = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT d.*, l.nome_cidade FROM dados_diarios d ");
+        sql.append("INNER JOIN localizacoes l ON d.id_localizacao = l.id_localizacao");
+
+        if (nomeCidade != null && !nomeCidade.isEmpty()) {
+            sql.append(" WHERE l.nome_cidade LIKE ?");
+        }
+        sql.append(" ORDER BY l.nome_cidade, d.data");
+
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+                if (nomeCidade != null && !nomeCidade.isEmpty()) {
+                    pstmt.setString(1, "%" + nomeCidade + "%");
+                }
                 try (ResultSet rs = pstmt.executeQuery()) {
                     while (rs.next()) {
                         DadoDiario dado = mapRowToObject(rs);

@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 import com.github.lgooddatepicker.components.DatePicker;
 import com.unisc.projeto.clima_app.controller.HistoricoController;
@@ -23,6 +24,7 @@ public class HistoricoFrm extends JPanel {
 	private DatePicker datePickerFim;
 	private JButton btnFiltrar;
 	private JTable tabelaHistorico;
+	private JTextField txtNomeCidade; 
 	private HistoricoController controller;
 
 	public HistoricoFrm() {
@@ -36,6 +38,7 @@ public class HistoricoFrm extends JPanel {
 		datePickerFim = ComponentFactory.createDatePicker(LocalDate.now());
 		btnFiltrar = ComponentFactory.createButton(IconUtils.carregarIconeRedimensionado(IconUtils.SEARCH, 30, 30));
 		tabelaHistorico = ComponentFactory.createTable( new String[] { "Cidade", "Data", "Temp. Mín/Máx", "Precipitação (mm)", "Vento Máx (km/h)" });
+		txtNomeCidade = ComponentFactory.createTextField(25);
 	}
 
 	private void initLayout() {
@@ -47,6 +50,8 @@ public class HistoricoFrm extends JPanel {
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
 		headerPanel.add(lblTitle, BorderLayout.WEST);
 		JPanel filterPanel = new JPanel();
+		filterPanel.add(ComponentFactory.createLabel("Localização:"));
+		filterPanel.add(txtNomeCidade); 
 		filterPanel.add(ComponentFactory.createLabel("De:"));
 		filterPanel.add(datePickerInicio);
 		filterPanel.add(ComponentFactory.createLabel("Até:"));
@@ -76,5 +81,9 @@ public class HistoricoFrm extends JPanel {
 
 	public HistoricoController getController() {
 		return controller;
+	}
+	
+	public JTextField getTxtNomeCidade() { 
+		return txtNomeCidade;
 	}
 }

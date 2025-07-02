@@ -1,20 +1,19 @@
 package com.unisc.projeto.clima_app.controller;
 
-import com.github.lgooddatepicker.components.DatePicker;
-import com.unisc.projeto.clima_app.dao.HistoricoDAO;
-import com.unisc.projeto.clima_app.domain.DadoDiario;
-import com.unisc.projeto.clima_app.util.WeatherCodeUtil;
-import com.unisc.projeto.clima_app.view.HistoricoFrm;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
+import com.github.lgooddatepicker.components.DatePicker;
+import com.unisc.projeto.clima_app.dao.HistoricoDAO;
+import com.unisc.projeto.clima_app.domain.DadoDiario;
+import com.unisc.projeto.clima_app.view.HistoricoFrm;
 
 public class HistoricoController {
     
@@ -27,7 +26,7 @@ public class HistoricoController {
         this.view = view;
         this.historicoDAO = new HistoricoDAO();
         initListeners();
-        carregaDados();
+      //  carregaDados();
     }
     
     private void initListeners() {
@@ -35,8 +34,8 @@ public class HistoricoController {
     }
 
     public void carregaDados() {
-        ArrayList<DadoDiario> dados = historicoDAO.findDadosDiarios();
-        System.out.println("Quantidade da dados: " + dados.size());
+    	List<DadoDiario> dados = historicoDAO.findDadosDiarios();
+       // System.out.println("Quantidade da dados: " + dados.size());
 
         DefaultTableModel model = (DefaultTableModel) view.getTabelaHistorico().getModel();
         model.setRowCount(0);
@@ -58,6 +57,7 @@ public class HistoricoController {
         LOGGER.log(Level.INFO, "Iniciando a filtragem de dados...");
         DatePicker pickerInicio = view.getDatePickerInicio();
         DatePicker pickerFim = view.getDatePickerFim();
+        String nomeCidade = view.getTxtNomeCidade().getText().trim(); 
 
         LocalDate inicio = pickerInicio.getDate();
         LocalDate fim = pickerFim.getDate();
@@ -65,13 +65,21 @@ public class HistoricoController {
         List<DadoDiario> dadosDoBanco;
 
         if (inicio == null || fim == null) {
-            dadosDoBanco = historicoDAO.findDadosDiarios();
+            if (nomeCidade.isEmpty()) {
+                dadosDoBanco = historicoDAO.findDadosDiarios();
+            } else {
+                dadosDoBanco = historicoDAO.findDadosDiarios(nomeCidade);
+            }
         } else {
             if (inicio.isAfter(fim)) {
                 JOptionPane.showMessageDialog(null, "A data de início não pode ser posterior à data de fim.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            dadosDoBanco = historicoDAO.findDadosDiarios(inicio, fim);
+            if (nomeCidade.isEmpty()) {
+                dadosDoBanco = historicoDAO.findDadosDiarios(inicio, fim);
+            } else {
+                dadosDoBanco = historicoDAO.findDadosDiarios(inicio, fim, nomeCidade); 
+            }
         }
 
         LOGGER.log(Level.INFO, "Foram encontrados {0} registros no banco de dados.", dadosDoBanco.size());
