@@ -1,3 +1,4 @@
+# Arquivos gerados pelo Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -5,15 +6,14 @@ pom.xml.versionsBackup
 pom.xml.next
 release.properties
 dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
-.mvn/wrapper/maven-wrapper.jar
 
-# Eclipse m2e generated files
-# Eclipse Core
+# Arquivos de configuração do Eclipse
 .project
-# JDT-specific (Eclipse Java Development Tools)
 .classpath
-# Intellij 
-*.iml
+.settings/
+
+# Arquivos de log
+*.log
+
+# Arquivos do sistema operacional
+.DS_Store
