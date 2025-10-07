@@ -1,0 +1,30 @@
+# Versão do docker-compose
+version: '3.8'
+
+# Seção de serviços (nossos contêineres)
+services:
+  # Serviço para o banco de dados MySQL
+  db:
+    # Usa a imagem oficial do MySQL, versão 8.0
+    image: mysql:8.0
+    # Nome do contêiner para fácil identificação
+    container_name: clima-app-db
+    # Reinicia o contêiner automaticamente se ele parar
+    restart: always
+    # Mapeia a porta 3306 do contêiner para a porta 3306 da sua máquina.
+    # Isso permite que sua aplicação Swing (rodando localmente) se conecte ao banco.
+    ports:
+      - "3306:3306"
+    # Variáveis de ambiente para configurar o MySQL
+    environment:
+      # IMPORTANTE: Permite que o usuário 'root' tenha uma senha vazia,
+      # exatamente como configurado no seu 'ConfigManager.java'.
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    # Cria um "volume" para persistir os dados do banco de dados.
+    # Sem isso, você perderia todos os dados ao parar o contêiner.
+    volumes:
+      - clima-app-db-data:/var/lib/mysql
+
+# Declaração do volume nomeado para garantir a persistência dos dados
+volumes:
+  clima-app-db-data:

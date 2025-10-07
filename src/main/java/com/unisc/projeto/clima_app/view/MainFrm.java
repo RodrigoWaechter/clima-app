@@ -2,6 +2,9 @@ package com.unisc.projeto.clima_app.view;
 
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -33,11 +36,13 @@ public class MainFrm extends JFrame {
 		setTitle("Clima App");
 		setSize(1400, 1050);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		initComponents();
 		initLayout();
 		initListeners();
+		initShutdownHook();
+
 	}
 
 	private void initComponents() {
@@ -98,15 +103,36 @@ public class MainFrm extends JFrame {
 		menuItemPreferencias.addActionListener((ActionEvent e) -> navigateTo("PREFERENCIAS"));
 		menuItemSobre.addActionListener((ActionEvent e) -> new SobreFrm().setVisible(true));
 	}
-    
-    public void navigateTo(String panelName) {
-        cardLayout.show(mainPanel, panelName);
-    }
+
+	public void navigateTo(String panelName) {
+		cardLayout.show(mainPanel, panelName);
+	}
+
+	private void initShutdownHook() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent windowEvent) {
+				System.out.println("Janela fechando. Desligando o contêiner Docker...");
+
+				try {
+					ProcessBuilder processBuilder = new ProcessBuilder("/usr/bin/docker", "compose", "down");
+					processBuilder.directory(new File(System.getProperty("user.dir")));
+					processBuilder.inheritIO();
+					Process process = processBuilder.start();
+					process.waitFor();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					System.exit(0);
+				}
+			}
+		});
+	}
 
 	public static void main(String[] args) {
-	    SetupDatabase.runSetup();
-        PreferenciaController.inicializarTemaAplicacao();
-        
+		SetupDatabase.runSetup();
+		PreferenciaController.inicializarTemaAplicacao();
+
 		SwingUtilities.invokeLater(() -> new MainFrm().setVisible(true));
 	}
 }
