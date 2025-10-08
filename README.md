@@ -4,37 +4,40 @@ Uma aplicação de desktop desenvolvida em Java com Swing para consulta de previ
 
 ## Funcionalidades
 
--   **Dashboard Principal:** Visualização completa com temperatura, sensação térmica, vento, humidade e precipitação.
--   **Previsão Horária:** Gráfico interativo com a previsão para as próximas 24 horas.
--   **Previsão para 7 Dias:** Tabela detalhada com as condições para a semana, incluindo ícones representativos.
--   **Busca por Cidade:** Pesquise o clima de qualquer cidade do mundo.
--   **Histórico de Dados:** Visualize dados meteorológicos de dias anteriores com filtros por data.
--   **Preferências do Utilizador:** Guarde a sua cidade favorita e personalize o tema da aplicação.
--   **Temas (Look and Feel):** Suporte para múltiplos temas visuais (claro, escuro, nativo do sistema) para uma experiência personalizada.
--   **Cache de Dados:** Otimização de performance através do armazenamento local de dados, evitando chamadas desnecessárias à API.
+- **Dashboard Principal:** Visualização completa com temperatura, sensação térmica, vento, humidade e precipitação.
+- **Previsão Horária:** Gráfico interativo com a previsão para as próximas 24 horas.
+- **Previsão para 7 Dias:** Tabela detalhada com as condições para a semana, incluindo ícones representativos.
+- **Busca por Cidade:** Pesquise o clima de qualquer cidade do mundo.
+- **Histórico de Dados:** Visualize dados meteorológicos de dias anteriores com filtros por data.
+- **Preferências do Utilizador:** Guarde a sua cidade favorita e personalize o tema da aplicação.
+- **Temas (Look and Feel):** Suporte para múltiplos temas visuais para uma experiência personalizada.
+- **Cache de Dados:** Otimização de performance através do armazenamento local de dados, evitando chamadas desnecessárias à API.
 
-## Screenshots
+## Screenshot
 
 ![2025-07-01 14-17-36](https://github.com/user-attachments/assets/750fa441-100b-459b-87da-f3a0fa626ed3)
 
-
 ## Tecnologias Utilizadas
 
--   **Java 11+**
--   **Swing** para a interface gráfica
--   **LGoodDatePicker** para a seleção de datas
--   **Open-Meteo API** como fonte de dados para geolocalização e previsão do tempo
--   **MySQL** para persistência de dados (localizações, preferências e cache de previsões)
+- **Java 17+**
+- **Swing** para a interface gráfica
+- **Maven** para gestão de dependências e build
+- **Docker** para containerização do banco de dados
+- **Open-Meteo API** como fonte de dados
+- **MySQL** para persistência de dados
 
-## Como Executar
+---
+
+## Como Executar - Linux
+
+Este projeto foi configurado para ser executado com um único comando, sem a necessidade de instalar e configurar um servidor MySQL manualmente.
 
 ### Pré-requisitos
 
--   JDK 11 ou superior instalado.
--   Um ambiente de servidor local com MySQL, como XAMPP.
--   Um IDE de Java, como Eclipse ou IntelliJ IDEA.
+- **Java 17 ou superior** instalado.
+- **Docker Desktop** instalado e em execução.
 
-### Passos
+### Passos para Executar
 
 1.  **Clone o Repositório**
     ```bash
@@ -42,36 +45,59 @@ Uma aplicação de desktop desenvolvida em Java com Swing para consulta de previ
     cd clima-app
     ```
 
-2.  **Configuração da Base de Dados**
-    -   A aplicação foi projetada para criar automaticamente a base de dados (`clima_app`) e as tabelas necessárias na primeira vez que for executada.
-    -   **Importante:** Verifique e, se necessário, ajuste as credenciais de acesso ao seu servidor MySQL (utilizador e password) na classe `com.unisc.projeto.clima_app.database.ConfigManager.java`. Por padrão, ela está configurada para um utilizador `root` sem password.
-    -   Certifique-se de que o seu serviço MySQL está a correr antes de iniciar a aplicação.
+2.  **Dê Permissão de Execução ao Script** (Apenas na primeira vez)
+    ```bash
+    chmod +x clima-app.sh
+    ```
 
-3.  **Importe o Projeto**
-    -   Abra o seu IDE e importe o projeto como um projeto Maven ou Gradle (consoante a sua configuração). O IDE deverá descarregar as dependências necessárias.
-
-4.  **Execute a Aplicação**
-    -   Encontre a classe `MainFrm.java` no pacote `com.unisc.projeto.clima_app.view`.
-    -   Execute o método `main` para iniciar a aplicação.
-
-## Estrutura do Projeto
-
-O projeto está organizado na seguinte estrutura de pacotes:
-
--   `com.unisc.projeto.clima_app.api`: Classes responsáveis pela comunicação com as APIs externas (Geocoding e Open-Meteo).
--   `com.unisc.projeto.clima_app.controller`: Controladores que gerem a lógica de negócio e a interação entre a View e o Model.
--   `com.unisc.projeto.clima_app.dao`: Data Access Objects, responsáveis por toda a comunicação com a base de dados.
--   `com.unisc.projeto.clima_app.domain`: Classes de modelo (POJOs) que representam as entidades do sistema (Localizacao, DadoDiario, etc.).
--   `com.unisc.projeto.clima_app.service`: Camada de serviço que orquestra as operações, como a obtenção e o armazenamento de dados climáticos.
--   `com.unisc.projeto.clima_app.util`: Classes utilitárias para tarefas comuns, como criação de componentes (`ComponentFactory`), manipulação de ícones e conversão de códigos de clima.
--   `com.unisc.projeto.clima_app.view`: Todas as classes relacionadas com a interface gráfica (JFrames, JPanels, componentes personalizados).
-
-## Autores
-
--   **Lucas Souza da Silva**
--   **Rodrigo Hammes Waechter**
--   **Vinicius Grahl Copetti**
+3.  **Execute o Lançador**
+    ```bash
+    ./clima-app.sh
+    ```
+    O script irá automaticamente:
+    - Iniciar o banco de dados MySQL dentro de um contêiner Docker.
+    - Executar a aplicação de desktop.
+    - Ao fechar a janela da aplicação, o script irá desligar e remover o contêiner do Docker, limpando o ambiente.
 
 ---
 
-Este projeto foi desenvolvido como parte da disciplina de Programação Avançada no curso de Ciência da Computação da Universidade de Santa Cruz do Sul (UNISC).
+## Para Desenvolvedores (Execução via IDE)
+
+Se preferir executar o projeto através de um ambiente de desenvolvimento:
+
+1.  **Inicie o Banco de Dados com Docker**
+    No terminal, na raiz do projeto, execute:
+    ```bash
+    docker compose up -d
+    ```
+
+2.  **Importe o Projeto no seu IDE**
+    Abra o seu IDE (Eclipse, IntelliJ IDEA, etc.) e importe o projeto como um "Existing Maven Project". O IDE irá descarregar todas as dependências definidas no `pom.xml`.
+
+3.  **Execute a Aplicação**
+    Encontre a classe `MainFrm.java` no pacote `com.unisc.projeto.clima_app.view` e execute o método `main`.
+
+4.  **Pare o Banco de Dados**
+    Quando terminar de usar, pare o contêiner com o comando:
+    ```bash
+    docker compose down
+    ```
+
+## Estrutura do Projeto
+
+-   `api`: Classes para comunicação com as APIs externas.
+-   `controller`: Controladores que gerem a lógica de negócio.
+-   `dao`: Data Access Objects para comunicação com a base de dados.
+-   `domain`: Classes de modelo (POJOs) do sistema.
+-   `service`: Camada de serviço que orquestra as operações.
+-   `util`: Classes utilitárias.
+-   `view`: Classes da interface gráfica (Swing).
+
+## Autores
+
+- **Lucas Souza da Silva**
+- **Rodrigo Hammes Waechter**
+- **Vinicius Grahl Copetti**
+
+---
+*Este projeto foi desenvolvido como parte da disciplina de Programação Avançada no curso de Ciência da Computação da Universidade de Santa Cruz do Sul (UNISC).*
